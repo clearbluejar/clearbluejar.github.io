@@ -1,46 +1,100 @@
-# Chirpy Starter [![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)](https://rubygems.org/gems/jekyll-theme-chirpy) [![GitHub license](https://img.shields.io/github/license/cotes2020/chirpy-starter.svg?color=blue)][mit]
+# clearbluejar.github.io 
 
-When installing the [**Chirpy**][chirpy] theme through [RubyGems.org][gem], Jekyll can only read files in the folders `_includes`, `_layout`, `_sass` and `assets`, as well as a small part of options of the `_config.yml` file from the theme's gem. If you have ever installed this theme gem, you can use the command `bundle info --path jekyll-theme-chirpy` to locate these files.
+Site for random code and ramblings. 
 
-The Jekyll organization claims that this is to leave the ball in the user’s court, but this also results in users not being able to enjoy the out-of-the-box experience when using feature-rich themes.
+## Development
 
-To fully use all the features of **Chirpy**, you need to copy the other critical files from the theme's gem to your Jekyll site. The following is a list of targets:
+The development cycle is quite staightforward if you use docker. No dependencies to install!  
 
-```shell
-.
-├── _config.yml
-├── _data
-├── _plugins
-├── _tabs
-└── index.html
+Clone your repo:
+```terminal
+$ git clone clearbluejar/clearbluejar.github.io
+$ cd clearbluejar.github.io
 ```
 
-In order to save your time, and to prevent you from missing some files when copying, we extract those files/configurations of the latest version of the **Chirpy** theme and the [CD][CD] workflow to here, so that you can start writing in minutes.
+Then startup docker. The `jekyll:jekyll` docker image will build your site and host it locally:
 
-## Prerequisites
+```terminal
+$ docker run -it --rm \
+    --volume="$PWD:/srv/jekyll" \
+    -p 4000:4000 jekyll/jekyll \
+    jekyll serve
 
-Follow the instructions in the [Jekyll Docs](https://jekyllrb.com/docs/installation/) to complete the installation of `Ruby`, `RubyGems`, `Jekyll` and `Bundler`.
 
-## Installation
+Fetching gem metadata from https://rubygems.org/.........
+Using public_suffix 4.0.6
+Using bundler 2.2.24
+Using colorator 1.1.0
+Using concurrent-ruby 1.1.9
 
-[**Use this template**][use-template] to generate a brand new repository and name it `<GH_USERNAME>.github.io`, where `GH_USERNAME` represents your GitHub username.
+... several line omitted ...
 
-Then clone it to your local machine and run:
+Fetching jekyll-theme-chirpy 5.1.0
+Installing jekyll-theme-chirpy 5.1.0
+Bundle complete! 7 Gemfile dependencies, 44 gems now installed.
+Use `bundle info [gemname]` to see where a bundled gem is installed.
+ruby 2.7.1p83 (2020-03-31 revision a0c7c23c9c) [x86_64-linux-musl]
+Configuration file: /srv/jekyll/_config.yml
+ Theme Config file: /usr/gem/gems/jekyll-theme-chirpy-5.1.0/_config.yml
+            Source: /srv/jekyll
+       Destination: /srv/jekyll/_site
+ Incremental build: disabled. Enable with --incremental
+      Generating...
+                    done in 4.505 seconds.
+ Auto-regeneration: enabled for '/srv/jekyll'
+    Server address: http://0.0.0.0:4000/
+  Server running... press ctrl-c to stop.      
 
 ```
-$ bundle
+
+> Server address: http://0.0.0.0:4000/
+Once it is running, you can visit your site locally at [http://localhost:4000](http://localhost:4000).
+
+As you make changes to the site, jekyll will detect them and update them realtime.
+
+```terminal
+Regenerating: 1 file(s) changed at 2022-02-17 08:02:23
+                    _posts/2021-02-17-my-new-post.md
+                    ...done in 3.214756529 seconds.
 ```
 
-## Usage
+## Writing A New Post
 
-Please see the [theme's docs](https://github.com/cotes2020/jekyll-theme-chirpy#documentation).
+Mostly following the advice from [chirpy - Writing a New Post](https://chirpy.cotes.page/posts/write-a-new-post/), install Jekyll-Compose and run one of the commands
 
-## License
 
-This work is published under [MIT][mit] License.
+`bundle exec jekyll post "My New Post" --timestamp-format "%Y-%m-%d %H:%M:%S %z"`
 
-[gem]: https://rubygems.org/gems/jekyll-theme-chirpy
-[chirpy]: https://github.com/cotes2020/jekyll-theme-chirpy/
-[use-template]: https://github.com/cotes2020/chirpy-starter/generate
-[CD]: https://en.wikipedia.org/wiki/Continuous_deployment
-[mit]: https://github.com/cotes2020/chirpy-starter/blob/master/LICENSE
+The post will be available now within `_posts`:
+```terminal
+bash-5.0# bundle exec jekyll post "These Are You First Steps" --timestamp-format "%Y-%m-%d %H:%M:%S %z"
+Configuration file: /srv/jekyll/_config.yml
+New post created at _posts/2022-02-17-these-are-you-first-steps.md
+```
+
+It will generate the post with some default YAML. Update your [_config.yml] with specific `jekyll-compose` settings as [suggested](https://github.com/jekyll/jekyll-compose#:~:text=Set%20default%20front%20matter%20for%20drafts%20and%20posts):
+
+```yaml
+jekyll_compose:
+  default_front_matter:
+    posts:
+      description:
+      image:
+      category: [TOP_CATEGORIE, SUB_CATEGORIE]
+      tags: blog
+      mermaid: true
+```
+
+The new posts that you create will contain the default [YAML front matter](https://jekyllrb.com/docs/front-matter/) as specified by your config. 
+
+---
+
+## Credits
+
+This site was built with:
+
+- Engine: [Jekyll](https://jekyllrb.com/)
+- Theme: [chirpy](https://github.com/cotes2020/jekyll-theme-chirpy/)
+- Favicon Generation: [RealFaviconGenerator](https://realfavicongenerator.net/)
+
+This work is published under [MIT](https://github.com/clearbluejar/clearbluejar.github.io/blob/main/LICENSE) License.

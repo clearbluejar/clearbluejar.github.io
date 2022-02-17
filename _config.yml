@@ -21,12 +21,12 @@ timezone:
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: clearbluejar's blog                          # the main title
+title: clearbluejar                          # the main title
 
-tagline: A text-focused Jekyll theme   # it will display as the sub-title
+tagline: blog, code, and thoughts   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
-  A minimal, responsive, and powerful Jekyll theme for presenting professional writing.
+  blog, code, and thoughts
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: 'https://clearbluejar.github.io'
@@ -40,7 +40,7 @@ twitter:
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: your_full_name
+  name: clearbluejar
   #email: example@doamin.com             # change to your email address
   links:
     # The first element serves as the copyright owner's link
@@ -83,7 +83,7 @@ theme_mode:   # [light|dark]
 img_cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar:
+avatar: https://github.com/clearbluejar.png
 
 # boolean type, the global switch for ToC in posts.
 toc: true
@@ -195,3 +195,13 @@ jekyll-archives:
   permalinks:
     tag: /tags/:name/
     category: /categories/:name/
+
+jekyll_compose:
+  default_front_matter:
+    posts:
+      description:
+      image:
+      category: [TOP_CATEGORIE, SUB_CATEGORIE]
+      tags: blog
+      mermaid: true
+      
