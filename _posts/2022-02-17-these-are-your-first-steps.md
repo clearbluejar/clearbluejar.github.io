@@ -2,7 +2,7 @@
 layout: post
 title: These Are Your First Steps
 date: '2022-02-17 07:29:12 -0600'
-description: 'First steps in creating a Jekyll blog. Provide a simple workflow using Docker.'
+description: 'First steps in creating a modern Jekyll blog. Discover a simple development workflow leveraging Docker, Github, and Jekyll to create a great looking static site.'
 category:
 - writing
 - jekyll
@@ -157,8 +157,8 @@ graph TD
     C --> D{fa:fa-camera-retro Test Site with jekyll/jekyll docker image}
     D --> | Make Edits | C
     D --> | Done Editing | E[Finish, Commit, And Deploy Post]
-    E --> F[fa:fa-twitter Tweet link to others know you are awesome]
-    F --> | Repeat | B    
+    E --> F[fa:fa-twitter Tweet link to let others know you are awesome]
+    F --> | Repeat | B
 ```
 
 ---
