@@ -18,4 +18,4 @@ Research provides you with new ideas that need to be connected, placed into cont
 
 The hope is to create content, share it, get feedback, and improve.
 
-Have a thought about a post? Find an issue? DM me [@clearbluejar](https://twitter.com/clearbluejar)
+Have a thought about a post? Find an issue? Let me know [@clearbluejar](https://twitter.com/clearbluejar).
