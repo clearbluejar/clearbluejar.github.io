@@ -1,0 +1,25 @@
+---
+name: Post FeedBack
+about: 'The template is to gather feedback on posts. '
+title: "[Feedback]"
+labels: ''
+assignees: ''
+
+---
+
+Which Post are you referring to?
+
+Could you score this post from 1-10 on how satisfied you were after reading it?
+
+Don’t be afraid to give me a low score. The more people tell me this isn't good yet, the more I'm motivated to make it even better.
+
+Also, feel free to point out any problems and to suggest ideal fixes:
+
+- Logic — What didn’t you agree with?
+- Clarity — What was unclear?
+- Interest — What bored you?
+- Brevity — What unnecessary things should be removed?
+- Expansion — What unanswered questions were you left with?
+- Cohesion — Was there unifying flow of ideas or argument presented?
+
+[Source](https://www.julian.com/guide/write/editing)
