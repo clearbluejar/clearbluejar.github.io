@@ -204,4 +204,16 @@ jekyll_compose:
       category: [TOP_CATEGORIE, SUB_CATEGORIE]
       tags: blog
       mermaid: true
+      author: clearbluejar
+      category:
+        - main
+        - sub
+      tags:
+        - tag1
+        - tag2
+      image:
+        path: "/assets/img/"
+        src: "/assets/img/"
+        alt: alt text
+        mermaid: true
       

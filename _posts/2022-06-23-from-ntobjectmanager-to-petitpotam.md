@@ -4,6 +4,7 @@ title: From NtObjectManager to PetitPotam
 date: 2022-06-23 22:46 -0500
 description: Windows RPC enumeration, discovery, and auditing via NtObjectManager. We will audit the vulnerable RPC interfaces that lead to PetitPotam, discover how they have changed over the past year, and overcome some common RPC auditing pitfalls.
 author_twitter: clearbluejar
+author: clearbluejar
 category:
 - windows
 - rpc

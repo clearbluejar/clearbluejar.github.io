@@ -19,11 +19,11 @@ tags:
 image:
   path: "/assets/img/2022-06-02-surveying-windows-rpc-discovery-tools/todd-quackenbush-IClZBVw5W5A-unsplash.jpg"
   src: "/assets/img/2022-06-02-surveying-windows-rpc-discovery-tools/todd-quackenbush-IClZBVw5W5A-unsplash.jpg"
-  alt: A survey of RPC tools - Cover photo by Todd Quackenbush on Unsplash
+  alt: A Survey of RPC Discovery Tools
 mermaid: true
 ---
 
-**TL;DR; A survey of Windows Remote Procedure Call discovery tools and an attempt to understand how open source tools discover RPC servers, interfaces, and procedures.**
+**TL;DR A survey of Windows Remote Procedure Call discovery tools and an attempt to understand how open source tools discover RPC servers, interfaces, and procedures.**
 
 Windows RPC has been a black box for me for some time. This post is an attempt to leverage analysis of open source RPC tools to pry open that box. I started by reading MSDN, getting bored and then bouncing between several [detailed](https://csandker.io/2021/02/21/Offensive-Windows-IPC-2-RPC.html) security and [research](https://www.fortinet.com/blog/threat-research/rpc-bug-hunting-case-studies---part-2) blog [posts](https://itm4n.github.io/fuzzing-windows-rpc-rpcview/). Reading was my first step down the road of Windows RPC comprehension, and it helped me understand RPC at a high level. 
 
