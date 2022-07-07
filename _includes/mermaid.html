@@ -54,10 +54,10 @@
 
     window.addEventListener("message", updateMermaid);
     
-    // *******
-    // added this to fix mermaid failing to render without refresh
+    /* fix mermaid failing to render without refresh */
     const toggle = new ModeToggle();
     toggle.notify();
-    /// ********
+    /* end fix */
+    
   });
 </script>
