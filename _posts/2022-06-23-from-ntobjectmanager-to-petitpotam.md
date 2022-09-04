@@ -14,7 +14,7 @@ tags:
 - NTLMrelay
 - petitpotam
 - C#
-- RPC
+- rpc
 - ghidra
 
 image:
