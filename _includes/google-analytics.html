@@ -9,6 +9,7 @@
     function gtag(){dataLayer.push(arguments);}
 
     gtag('js', new Date());    
-    gtag('config', '{{ site.google_analytics.id }}', {'cookie_expires': 0 });
+    // Use GDPR compliant Google Analytics settings
+    gtag('config', '{{ site.google_analytics.id }}', {'anonymize_ip': true });
   });
 </script>
