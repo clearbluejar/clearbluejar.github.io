@@ -11,7 +11,6 @@ mermaid: true
 image:
   path: '/assets/img/2022-02-17-these-are-you-first-steps/jukan-tateisi-bJhT_8nbUA0-unsplash.jpg' 
   src: '/assets/img/2022-02-17-these-are-you-first-steps/jukan-tateisi-bJhT_8nbUA0-unsplash.jpg'
-  alt: 'Photo by Jukan Tateisi on Unsplash'
 ---
 
 ---

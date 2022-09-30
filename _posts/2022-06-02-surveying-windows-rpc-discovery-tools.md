@@ -3,7 +3,6 @@ layout: post
 title: A Survey of Windows RPC Discovery Tools
 date: 2022-06-02 00:11 -0500
 description:  A survey of Windows Remote Procedure Call discovery tools and an attempt to understand how open source tools discover RPC servers, interfaces, and procedures.
-author: clearbluejar
 category:
 - windows
 - rpc
