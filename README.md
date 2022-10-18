@@ -97,4 +97,7 @@ This site was built with:
 - Theme: [chirpy](https://github.com/cotes2020/jekyll-theme-chirpy/)
 - Favicon Generation: [RealFaviconGenerator](https://realfavicongenerator.net/)
 
-This work is published under [MIT](https://github.com/clearbluejar/clearbluejar.github.io/blob/main/LICENSE) License.
+## Licenses
+
+- This posts and content is published under [LICENSE](LICENSE)
+- The chirpy Jekyll theme template and gem is published under [MIT](LICENSE.chirpy) License.
