@@ -35,7 +35,7 @@ To understand where the current state of Python scripting with Ghidra, I started
   - Scripts can be edited and run within Ghidra's Script Manager
 - [Experimenting with Ghidra Scripting](https://blog.tofile.dev/2020/01/11/ghidra.html) by [@pathtofile](https://twitter.com/pathtofile)
   - Python autocomplete exists for IDEs!
-  - Jython is how Ghidra supports provides Python scripting. It limits Python to 2.7.
+  - Jython is how Ghidra provides Python scripting. It limits Python to 2.7.
   - Python3 is possible!
 - [Ghidra Class Scripting](https://web.archive.org/web/20200429134205/https://ghidra.re/courses/GhidraClass/Intermediate/Scripting_withNotes.html#Scripting.html)
   - Learn how to run scripts with the GUI
@@ -50,7 +50,7 @@ For developing Ghidra scripts, the obvious choice is clear:
 
 > When scripting with Ghidra, the logical choice for editing or creating scripts is the Eclipse IDE. [A Guide to Ghidra Scripting Development for Malware Researchers](https://www.sentinelone.com/labs/a-guide-to-ghidra-scripting-development-for-malware-researchers/)
 
-Ghidra prefers [Java](https://www.java.com/en/) and suggests you use [Eclipse](https://www.eclipse.org/ide/).
+Ghidra prefers [Java](https://www.java.com/en/) and recommends you use [Eclipse](https://www.eclipse.org/ide/).
 
 ![](/assets/img/2022-09-30-building-vscode-ghidra-python-skeletons/nope-jim.gif){: .shadow }_Thoughts on Java and Eclipse_
 
@@ -58,7 +58,7 @@ Ghidra prefers [Java](https://www.java.com/en/) and suggests you use [Eclipse](h
 
 ### Existing VS Code Ghidra Scripting Template
 
-Before we solve a problem that might be already solved, we take a look around for existing VScode templates. An [experienced](https://github.com/NationalSecurityAgency/ghidra/commits?author=astrelsky) Ghidra developer [atsrelky](https://github.com/astrelsky) had a repo that seemed to be what I was looking for. It was a VScode template [vscode-ghidra-skeleton](https://github.com/astrelsky/vscode-ghidra-skeleton) for Ghidra scripting. He had completed the work to integrate Java, but didn't yet have support for Python.
+Before we solve a problem that might be already solved, we take a look around for existing VScode templates. An [experienced](https://github.com/NationalSecurityAgency/ghidra/commits?author=astrelsky) Ghidra developer [atsrelky](https://github.com/astrelsky) had a repo that seemed to be what I was looking for. It was a VScode template, [vscode-ghidra-skeleton](https://github.com/astrelsky/vscode-ghidra-skeleton) for Ghidra scripting. He had completed the work to integrate Java, but didn't yet have support for Python.
 
 ![no python support](/assets/img/2022-09-30-building-vscode-ghidra-python-skeletons/vscode-skeleton-todo.png){: .shadow }_No Python Support_
 
@@ -66,7 +66,7 @@ The template [uses](https://github.com/astrelsky/vscode-ghidra-skeleton/tree/mas
 
 ![skeleton-files](/assets/img/2022-09-30-building-vscode-ghidra-python-skeletons/skeleton-files.png){: .shadow }_Skeleton Java Files_
 
-I didn't see any other template examples on Github, but thanks to `astrelsky` I had inspiration.
+I didn't see any other template examples on GitHub, but thanks to `astrelsky` I had inspiration.
 
 ## The First Attempt - ghidra-python-vscode-skeleton v1
 
@@ -87,9 +87,9 @@ Quoted from the first version of the template [ghidra-python-vscode-skeleton](ht
 
 These steps can be accomplished with the following two commands using Ghidra's provided `analyzeHeadless` script.
 
-- **import and create project**
+- **Import and create project**
   - `analyzeHeadless .ghidra_projects/sample_project sample_project -import /bin/ls`
-- **run a script**
+- **Run a script**
   - `analyzeHeadless .ghidra_projects/sample_project sample_project -postscript sample.py`
 
 ### Running AnalyzeHeadless
@@ -126,7 +126,7 @@ with open(properties, 'r') as f:
 subprocess.run(args)
 ```
 
-The project assumed you had Ghidra installed and you would update your [settings.json](https://github.com/clearbluejar/ghidra-python-vscode-skeleton/blob/main/.vscode/settings.json) to match your development environment. This file held some of the default arguments needed for analyze headless. The project supported autocomplete via [VDOO-Connected-Trust/ghidra-pyi-generator](https://github.com/VDOO-Connected-Trust/ghidra-pyi-generator).
+The project assumed you had Ghidra installed, and you would update your [settings.json](https://github.com/clearbluejar/ghidra-python-vscode-skeleton/blob/main/.vscode/settings.json) to match your development environment. This file held some default arguments needed to analyze headless. The project supported autocomplete via [VDOO-Connected-Trust/ghidra-pyi-generator](https://github.com/VDOO-Connected-Trust/ghidra-pyi-generator).
 
 ### Sample Ghidra Python Script
 
@@ -152,7 +152,7 @@ for block in prog.getMemory().getBlocks():
 
 ### Shortcomings
 
-The first iteration of the template project allowed you to run a python script and have autocomplete within your IDE. There were still several **shortcomings** with the template project as it lacked:
+The first iteration of the template project allowed you to run a python script and have autocomplete within your IDE. There were still several **shortcomings** with the template project, as it lacked:
 
 - **Debugging within the IDE** - This version simply kicked off the [analyzeHeadless] script with no way to debug within the IDE.
 - **Python 3 support** - This version relied on Ghidra's Jyhon, which is limited to Python 2.7.
@@ -178,7 +178,7 @@ This is Ghidra's "native" support for Python.  Jython is an implementation of th
 
 ![gb-github](/assets/img/2022-09-30-building-vscode-ghidra-python-skeletons/ghidra-bridge-github.png){: .shadow }_justfoxing/ghidra_bridge githhub_
 
-Ghidra Bridge brings Python 3 support but still relies on  Jython. It leverages `jfx_bridge` to link Python 2 and 3.
+Ghidra Bridge brings Python 3 support, but still relies on Jython. It leverages `jfx_bridge` to link Python 2 and 3.
 
   > jfx_bridge is a simple, single file Python RPC bridge, designed to allow interacting from modern python3 to python2. It was built to operate in constrained interpreters, like the Jython interpreters built into more than one reverse-engineering tool, to allow you to access and interact with the data in the tool, and then use modern python and up-to-date packages to do your work. [jfx_bridge](https://github.com/justfoxing/jfx_bridge/#how-it-works)
 
@@ -232,7 +232,7 @@ try:
 
 ```
 
-As you can see in the code, the overhead it a bit high. For scripting, we need to first run the server, wait for it to be ready, connect to it within the context, and when I'm done I have to wait for the connection to close. Not only that I found it incredibly slow.
+As you can see in the code, the overhead is a bit high. For scripting, we need to first run the server, wait for it to be ready, connect to it within the context, and when I'm done I have to wait for the connection to close. Not only that, I found it incredibly slow.
 
 > Ghidra Bridge is an effort to sidestep that problem - instead of being stuck in Jython, set up an RPC proxy for Python objects, so we can call into Ghidra/Jython-land to get the data we need, then bring it back to a more up-to-date Python with all the packages you need to do your work. https://github.com/justfoxing/ghidra_bridge
 
@@ -248,9 +248,9 @@ Despite being slow, it allows you to debug within VScode.
 
 > Unlike Jython, JPype does not achieve this by re-implementing Python, but instead by interfacing both virtual machines at the native level. This shared memory based approach achieves good computing performance, while providing the access to the entirety of CPython and Java libraries. https://jpype.readthedocs.io/en/latest/
 
-Pyhidra leverages CPython to interface with Java at the native level. No bridges or translation. It does this with [Jpype](https://jpype.readthedocs.io/en/latest/). Full disclosure, this is my favorite Ghidra Python implementation so far. The Pyhidra library is clean and straightforward. The library installs a plugin to provide a Python 3 interpreter for Ghidra (so that it can be run in the GUI), or you can run your script with Python 3 (via JPype), **without the need to modify Ghidra**.  The reason being is that JPype will start a JVM for you, load up Ghidra Java classes in it's entirety, and provide you access to all the Ghidra Java classes from Python.
+Pyhidra leverages CPython to interface with Java at the native level. No bridges or translation. It does this with [Jpype](https://jpype.readthedocs.io/en/latest/). Full disclosure, this is my favorite Ghidra Python implementation so far. The Pyhidra library is clean and straightforward. The library installs a plugin to provide a Python 3 interpreter for Ghidra (so that it can be run in the GUI), or you can run your script with Python 3 (via JPype), **without the need to modify Ghidra**.  The reason being is that JPype will start a JVM for you, load up Ghidra Java classes in its entirety, and provide you access to all the Ghidra Java classes from Python.
 
-Taking a look inside Pyhidra we can see how it starts a JVM for it's [launcher.py](https://github.com/dod-cyber-crime-center/pyhidra/blob/a49a6fb21f3bc75ef0c05505676998f08c9a47e3/pyhidra/launcher.py#L155):
+Taking a look inside Pyhidra we can see how it starts a JVM for its [launcher.py](https://github.com/dod-cyber-crime-center/pyhidra/blob/a49a6fb21f3bc75ef0c05505676998f08c9a47e3/pyhidra/launcher.py#L155):
 
 ```python
   def start(self):
@@ -287,7 +287,7 @@ Taking a look inside Pyhidra we can see how it starts a JVM for it's [launcher.p
 
 ```
 
-After it is initalized, you can then import classes and make direct calls to Ghidra. From [sample_pyhidra.py](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton/blob/main/sample_pyhidra.py):
+After it is initialized, you can then import classes and make direct calls to Ghidra. From [sample_pyhidra.py](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton/blob/main/sample_pyhidra.py):
 
 ```python
 import pyhidra
@@ -334,7 +334,7 @@ Perhaps I am missing something, but I can't see all the hype. It also seems to h
 
 ### Devcontainers
 
-Leveraging one of the ways to run Python options above you can have Python debugging in VScode, autocomplete, or both. The last problem to solve to allow the template to work on all platforms. I couldn't see a way to do this without providing a 1000 settings.json configurations and launch.json and tasks.json variations. Instead I went down the path of containers to solve it for me.
+Leveraging one of the ways to run Python options above, you can have Python debugging in VScode, autocomplete, or both. The last problem to solve to allow the template to work on all platforms. I couldn't see a way to do this without providing 1000 settings.json configurations and launch.json and tasks.json variations. Instead, I went down the path of containers to solve it for me.
 
 `Devcontainers` (docker containers) within VScode allow you to define and ensure your development environment despite your platform. This is really powerful when you are trying to create a template that behaves the same anywhere. If you haven't tried [developing inside a container](https://code.visualstudio.com/docs/remote/containers#_getting-started) with vscode, you should.
 
@@ -354,7 +354,7 @@ And the result is pretty smooth.
 
 ## Conclusion
 
-In summary, you now have [ghidra-python-vscode-devcontainer-skeleton](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton). A self-proclaimed amazing template for Python script development with the Ghidra scripting API. To get started check out the [Quick Start](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton#quick-start-setup---dev-container--best-option)
+In summary, you now have [ghidra-python-vscode-devcontainer-skeleton](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton). A self-proclaimed amazing template for Python script development with the Ghidra scripting API. To get started, check out the [Quick Start](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton#quick-start-setup---dev-container--best-option)
 
 ### Square Peg Round Hole?
 
