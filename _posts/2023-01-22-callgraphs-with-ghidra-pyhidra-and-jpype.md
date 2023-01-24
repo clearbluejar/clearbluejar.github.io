@@ -19,13 +19,13 @@ tags:
 mermaid: true
 ---
 
-TLDR; This post will teach you how to leverage Ghidra's [FlatProgramAPI](https://ghidra.re/ghidra_docs/api/ghidra/program/flatapi/FlatProgramAPI.html) and Python 3 to generate function callgraphs. Ghidra scripting with Python 3, powered by [Pyhidra (via Jpype)](https://github.com/dod-cyber-crime-center/pyhidra), provides robust access to Ghidra's SRE toolset for binary analysis. To follow along, clone the repo at [ghidra-pyhidra-callgraphs](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs).
+TLDR; This post will teach you how to leverage Ghidra's [FlatProgramAPI](https://ghidra.re/ghidra_docs/api/ghidra/program/flatapi/FlatProgramAPI.html) and Python 3 to generate function call graphs. Ghidra scripting with Python 3, powered by [Pyhidra (via Jpype)](https://github.com/dod-cyber-crime-center/pyhidra), provides robust access to Ghidra's SRE toolset for binary analysis. To follow along, clone the repo at [ghidra-pyhidra-callgraphs](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs).
 
 ## Ghidra, Pyhidra (via Jpype), and Callgraphs Oh My!
 
-Ghidra continues to impress me with its constant [improvements](https://htmlpreview.github.io/?https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_10.2.2_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.html), response to [issues](https://github.com/NationalSecurityAgency/ghidra/issues), and the overall quality of the SRE toolkit. After learning the ins and out of using the GUI, I am now leaning into Ghidra's Headless (non-GUI)  scripting to enable automation for large analysis tasks. For this post, we will look into automating the generation of function callgraphs as a simple demonstration of its power. By the end, we will generate something like this.
+Ghidra continues to impress me with its constant [improvements](https://htmlpreview.github.io/?https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_10.2.2_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.html), response to [issues](https://github.com/NationalSecurityAgency/ghidra/issues), and the overall quality of the SRE toolkit. After learning the ins and out of using the GUI, I am now leaning into Ghidra's Headless (non-GUI)  scripting to enable automation for large analysis tasks. For this post, we will look into automating the generation of function callgraphs as a simple demonstration of its power. By the end, we will generate several call graphs from a popular Windows binary `localspl.dll`.
 
-From a simple calling callgraph ([`SplWritePrinter`](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/blob/main/.callgraphs/localspl.dll.x64.10.0.22000.376/SplWritePrinter.flow.md#flowchart)):
+From `SplWritePrinter`'s simple [**calling** callgraph](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/blob/main/.callgraphs/localspl.dll.x64.10.0.22000.376/SplWritePrinter.flow.md#flowchart):
 
 ```mermaid
 flowchart TD
@@ -46,7 +46,7 @@ classDef shaded fill:#339933
 
 ```
 
-To its much more complex [called callgraph](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/blob/main/.callgraphs/localspl.dll.x64.10.0.22000.376/SplWritePrinter.flow.md#flowchart-1):
+To `SplWritePrinter`'s much more complex [**called** callgraph](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/blob/main/.callgraphs/localspl.dll.x64.10.0.22000.376/SplWritePrinter.flow.md#flowchart-1):
 
 ```mermaid
 flowchart LR
@@ -1071,7 +1071,7 @@ classDef shaded fill:#339933
 
 ## Ghidra Callgraphs
 
-A function [callgraph](https://en.wikipedia.org/wiki/Call_graph), like the one pictured above, provides a map of function  relationships within a program.  Which functions call other functions and are called by others.  It's a nice way to visualize code flow through a program, instead of reading a long list of functions. Before we get to building our own, let's learn how to leverage Ghidra and `pyhidra`. 
+A function [call graph](https://en.wikipedia.org/wiki/Call_graph) provides a map of function relationships within a program.  Which functions call other functions and are called by others.  It's a nice way to visualize code flow through a program, instead of reading a long list of functions. Before we get to building our own, let's learn how to leverage Ghidra and `pyhidra`. 
 
 The workflow for Ghidra (or any SRE tool) is something like this:
 
@@ -1080,21 +1080,21 @@ The workflow for Ghidra (or any SRE tool) is something like this:
 3.  **Analyze Binary** 
 4. **Find something amazing**
 
-When attempting that 4th step, you can leverage one of the several features within the GUI such as:
+When attempting that 4th step, you can leverage one of the several features within the GUI.
 
 The listing view (for assembly) and the decompiler for (C):
 
 ![ghidra-listing-assem-localspl](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/ghidra-listing-assem-localspl.png){: .shadow }_`IsSpoolerImpersonating` Listing View and Decompiler_
 
-Use the Function Graph window to see the code flow of a particular function:
+Use the *Function Graph* window to see the code flow of a particular function:
 
 ![ghidra-localspl-func-graph](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/ghidra-localspl-func-graph.png){: .shadow }_`IsSpoolerImpersonating` Function Graph_
 
-Use the Function Call Graph window to see the relationship of a function to others within a program:
+Use the *Function Call Graph* window to see the relationship of a function to others within a program:
 
 ![func-call-graph-localspl](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/func-call-graph-localspl.png){: .shadow }_`IsSpoolerImpersonating` Function Call Graph_
 
-Use the Function Call Trees window to recursively find function callers and called functions: 
+Use the *Function Call Trees* window to recursively find function callers and called functions: 
 
 ![func-call-trees-localspl](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/func-call-trees-localspl.png){: .shadow }_`IsSpoolerImpersonating` Function Call Trees_
 
@@ -1102,8 +1102,8 @@ And several other options:
 
 ![](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/standard-ghidra-windows.png){: .shadow }_Default Ghidra Windows_
 
-Ghidra has everything needed to dig deep into the depths of the binary you are hoping to reverse engineer and understand within its GUI. With that being the case, at some point, you will find a need to automate your analysis. Perhaps you are looking for a specific function or code pattern across 100s of binaries, and it would be too tedious to load up each one in the binary. 
-Maybe these features are useful, but they need to be tweaked to suit your particular need. Say we want to build our own Function Call Trees to understand the code flow? Maybe we want to transform the callgraphs into markdown from the callgraphs and [host them in a gist](https://gist.github.com/clearbluejar/b7bd3338ff2d27c283d3413e010f8167)? 
+Ghidra has everything needed to dig deep into the depths of the binary you are hoping to reverse engineer and understand within its GUI. With that being the case, at some point, you will find the need to automate your analysis. Perhaps you are looking for a specific function or code pattern across 100s of binaries, and it would be too tedious to manually perform the workflow on each binary. 
+Or maybe you find a useful feature, but it needs to be tweaked to suit your particular need. Say we want to build our own Function Call Trees to understand the code flow? Maybe we want to transform the call graphs into markdown and [host them in a gist](https://gist.github.com/clearbluejar/b7bd3338ff2d27c283d3413e010f8167)?
 
 Ghidra has you covered. Whether you use its [preferred language](https://github.com/NationalSecurityAgency/ghidra/blob/master/DevGuide.md#environment) Java, or are in the Python camp with me, you can leverage [Ghidra scripting](https://ghidra.re/ghidra_docs/api/ghidra/app/script/GhidraScript.html) to get the job done.
 
@@ -1113,21 +1113,21 @@ Let's figure out how to use Python and Ghidra.
 
 > Pyhidra leverages CPython to interface with Java at the native level. No bridges or translation. It does this with [Jpype](https://jpype.readthedocs.io/en/latest/). 
 
-Pyhidra is a python library that orchestrates Ghidra project creation and analysis (workflow), JVM startup (running Ghidra linked to Python). Pyhidra itself is well written and lightweight.  It mostly relies on `jpype` to do the heavy lifting, granting Python access to the Java Virtual Machine at the native level (read fast!). 
+`pyhidra` is a python library that orchestrates Ghidra project creation and analysis (workflow), JVM startup (running Ghidra linked to Python). `pyhidra` itself is well written and lightweight.  It mostly relies on `jpype` to do the heavy lifting, granting Python access to the Java Virtual Machine at the native level (read fast!). 
 
-The `jpype` python library gives you a means to access Java libraries from within Python. **It attempts to give you access to the entire Java language.** A quite impressive feat.  It does so by mapping Java classes and types to their nearest type in Python. While Java and Python share many language concepts (types, class, objects, function, methods, and members) they have several concepts with no direct mapping (weak vs strongly typed, Python lacking casting and type declarations).   Despite this, `jpype` addresses each [difference](https://jpype.readthedocs.io/en/latest/userguide.html#jpype-types) and leverages each similarity to provide their solution.  At the core of the mapping are type conversions Read more in their [excellent docs](https://jpype.readthedocs.io/en/latest/userguide.html. 
+The `jpype` python library gives you a means to access Java libraries from within Python. **It attempts to give you access to the entire Java language.** An impressive feat.  It does so by mapping Java classes or types to their nearest match in Python through several conversions classes starting with `J`something (such as [JClass](https://github.com/jpype-project/jpype/blob/20f18067dacd0b185c4f68fbf76ae8089931fa2a/jpype/_jclass.py "_jclass.py") or [JString](https://github.com/jpype-project/jpype/blob/20f18067dacd0b185c4f68fbf76ae8089931fa2a/jpype/_jstring.py "_jstring.py")). While Java and Python share many language concepts (types, class, objects, function, methods, and members) they have several concepts with no direct mapping (weak vs strongly typed, Python lacking casting and type declarations).   Despite this, `jpype` addresses each [difference](https://jpype.readthedocs.io/en/latest/userguide.html#jpype-types) and leverages each similarity to provide their solution.  Read more in their [excellent docs](https://jpype.readthedocs.io/en/latest/userguide.html). 
 
-If you want to know more about why we have selected `pyhidra` or details of `jpype`  take a look at my last post in the [Pyhidra and Jpype ](https://clearbluejar.github.io/posts/building-vscode-ghidra-python-skeletons/#pyhidra---cpython-and-jpype) section.
+If you want to know more about why we have selected `pyhidra` above other options or details of `jpype`  take a look at my last post in the [Pyhidra and Jpype ](https://clearbluejar.github.io/posts/building-vscode-ghidra-python-skeletons/#pyhidra---cpython-and-jpype) section.
 
 Now, how do we get started?
 
 ### Install  
 
-The first step is to install the `pyhidra` python package.
+The first step is to install the `pyhidra` Python package.
 
 #### Option 1: Pip Install 
 
-From their [README](https://github.com/dod-cyber-crime-center/pyhidra#install), to install `pyhidra`, simply:
+From `pyhidra`'s [README](https://github.com/dod-cyber-crime-center/pyhidra#install), to install, simply:
 
 ```bash
 pip install pyhidra
@@ -1136,9 +1136,11 @@ export GHIDRA_INSTALL_DIR="/path/to/ghidra"
 
 #### Option 2: Vscode Devcontainer
 
-I created a vscode Ghidra Python devcontainer that I use for several of my Ghidra Python projects. The magic of [devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) is "**Everything just works.**". This works well when I'm trying to dev on various platofrms and want the same experience across each. Check it out here: [ghidra-python-vscode-devcontainer-skeleton](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton#quick-start-setup---dev-container--best-option).
+Alternatively, you can try out a vscode Ghidra Python devcontainer template that I use for several of my Ghidra Python projects. The magic of [devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) is "**Everything just works.**". This works well when I'm trying to dev on various platforms and want the same experience across each. The template provides a devcontainer that installs the latest Ghidra, sets up autocomplete for VScode, and sets the needed `GHIDRA_INSTALL_DIR` environment variable needed for `pyhidra`. 
 
-#### Test Run Pyhidra
+Check it out and consider it as a starting point for your next Ghidra `pyhidra` project. If you find a problem or find it hard to use submit an [issue](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton/issues). Check it out here: [ghidra-python-vscode-devcontainer-skeleton](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton#quick-start-setup---dev-container--best-option).
+
+### Test Run Pyhidra
 
 You can test to see if `pyhidra` is running with your current Ghidra by simply running a script like:
 
@@ -1287,9 +1289,7 @@ With these foundational pieces, we can build a solution.
 
 I created a GitHub repo [ghidra-pyhidra-callgraphs](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs) to host the callgraphs script. When building Ghidra Python projects, I start with a template I created for Ghidra and `pyhidra`. 
 
-![pyhidra-github-template](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/github-template.png)
-
-Which is available [here](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton) as a [Github template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository) and useful as a starting point for your next project.  The template provides a devcontainer that installs the latest Ghidra, sets up autocomplete for VScode, and sets the needed `GHIDRA_INSTALL_DIR` environment variable needed for `pyhidra`. Check it out. If you find a problem or find it hard to use submit an issue. 
+![pyhidra-github-template](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/github-template.png){: .shadow }_pyhidra-github-template_
 
 Here is the basic usage for [ghidra_pyhidra_callgraphs.py](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/blob/main/ghidra_pyhidra_callgraphs.py):
 
@@ -1351,7 +1351,7 @@ python ghidra_pyhidra_callgraphs.py .data/localspl.dll.x64.10.0.22000.376 -s .da
 
 Earlier we introduced the `FlatProgramAPI`. While this API is suggested as the one that isn't likely to change over time, we are hardly limited to it.  Thanks to `jpype`, we have access to **every Ghidra class available with Java**. For example, in [ghidra_pyhidra_callgraphs.py](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/blob/main/ghidra_pyhidra_callgraphs.py) I setup the project to use a specific symbol file from [.data](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/tree/main/.data). To do this, I called a static method on the [PdbUniversalAnalyzer](https://github.com/NationalSecurityAgency/ghidra/blob/975db1919c9e13aeb794883f4e93603fc6c0ea7e/Ghidra/Features/PDB/src/main/java/ghidra/app/plugin/core/analysis/PdbUniversalAnalyzer.java#L50) Java class, which is not available in the API docs.
 
-![pdbuniveralanalyzer-class-not-found](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/pdbuniveralanalyzer-class-not-found.png)
+![pdbuniveralanalyzer-class-not-found](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/pdbuniveralanalyzer-class-not-found.png){: .shadow }_`PdbUniversalAnalyzer` Not Found in API docs_
 
 #### Configuring Symbols
 
@@ -1385,13 +1385,13 @@ PdbUniversalAnalyzer.setPdbFileOption(program, pdbFile)
 
 It creates a Java File object we can then use as the needed parameter. 
 
-![java-file-object-pyhidra](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/java-file-object-pyhidra.png)
+![java-file-object-pyhidra](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/java-file-object-pyhidra.png){: .shadow }_`java.io.File` from Python_
 
-The is a clear example of how we create, access, and leverage Java within Python. Is this making sense?
+This is a clear example of how we create, access, and leverage Java within Python. Is this making sense?
 
 ###  Callgraph Class
 
-So now we have a working project, with the full  power of Ghidra's SRE behind us. It is time to do something useful.  First thing to do is remember what a callgraph is. 
+So now we have a working project, with the full  power of Ghidra's SRE behind us. It is time to do something useful.  First thing to do is remember what a call graph is. 
 
 From wikipedia's entry on [Graph Theory](https://en.wikipedia.org/wiki/Graph_theory): 
 
@@ -1417,7 +1417,7 @@ classDef shaded fill:#339933
 
 The called graph, albeit difficult to see, begins with our selected function at its root. 
 
-![isspoolerimpersonating-called-callgraph](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/isspoolerimpersonating-called-callgraph.png)
+![isspoolerimpersonating-called-callgraph](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/isspoolerimpersonating-called-callgraph.png){: .shadow }_`IsSpoolerImpersonating` Called Callgraph _
 
 For me, this was the most challenging bit of this example repo. Pyhidra and Ghidra do the heavy lifting by providing all I need to analyze and traverse the binary. Remembering graph theory, directed graphs, and how to program them was the more difficult task. This brought me back to university computer science days, and I think I mostly have it correct. To store the callgraph edges and nodes, we will use a custom [`CallGraph` class](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/blob/1db84c4c7a83be1633b497f408c2bf9cd2c03aba/ghidra_pyhidra_callgraphs.py#L23-L112). Each node in our callgraph will represent a function and each edge a call to a function.
 
@@ -1527,11 +1527,11 @@ else:
 1. The order of adding links is reversed
 2. The function called might be external. Ghidra has separate method to test whether or not the function reference is external and when building the called graph, this case must be checked. 
 
-As the callgraph class traverses the function edges, it builds up a record in `self.graph` that looks something like:
+As the `CallGraph` class traverses the function edges, it builds up a record in `self.graph` that looks something like:
 
 > TODO add self.graph here
 
-The last step was to add some visualization to the graph data. 
+The last step was to add some visualization for the graph data. 
 
 ## Markdown All The Things
 
@@ -1608,13 +1608,13 @@ root((SplEnumForms))
 
 To the mindmap:
 
-![](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/splenumforms-mindmap-mermaidjs.png)
+![splenumforms-mindmap-mermaidjs](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/splenumforms-mindmap-mermaidjs.png){: .shadow }_`SplEnumForms` Mindmap _
 
 Not quite as impressive as the flowchart, but still interesting. 
 
 ### Entry and Endpoints
 
-Sometimes the graphs are too large to make sense of, but from an analysis point of view, it might be useful to know the entry points (the first function called in a program that will eventually call your function) or the endpoints (the last functions called as a result of your function).
+Sometimes the graphs are too large to make sense of, but from an analysis point of view, it might be useful to know the entry points (the first function called in a program that will eventually call your function) or the end points (the last functions called as a result of your function).
 
 A condensed view, showing only entrypoints to the callgraph for [`SplGetPrintProcCaps`
 ](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/blob/1db84c4c7a83be1633b497f408c2bf9cd2c03aba/.callgraphs/localspl.dll.x64.10.0.22000.376/SplGetPrintProcCaps.flow.md#splgetprintproccaps).
@@ -1648,5 +1648,5 @@ Before we conclude, check out these reasons for using markdown:
 
 ### Recap
 
-We covered quite a few topics in this post.  From Ghidra and Python to Callgraphs and Markdown. If you have some feedback or direct questions, reach out to me on Twitter or comment in the [thread for the post](fillinlater). 
+We covered quite a few topics in this post.  From Ghidra and Python, to callgraphs and Markdown. If you have some feedback or direct questions, reach out on Twitter or comment in the [thread for the post](fillinlater).
 
