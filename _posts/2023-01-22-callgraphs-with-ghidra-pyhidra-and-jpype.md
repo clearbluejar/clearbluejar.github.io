@@ -1537,7 +1537,7 @@ The last step was to add some visualization for the graph data.
 
 If you don't know already, I am a huge fan of [markdown](https://github.github.com/gfm/) and [`mermaidjs`](https://mermaid.js.org/#/). 
 
-> I write my notes (and most everything) in [Markdown](https://en.wikipedia.org/wiki/Markdown), along with what seems to be most of the rest of the world. While using Markdown, I discovered [Mermaids.js](https://mermaid-js.github.io/mermaid/#/) for charts and graphs and haven’t looked back. [2022-03-19-introducing-cve-markdown-charts-part-1](_posts/2022-03-19-introducing-cve-markdown-charts-part-1.md)
+> I write my notes (and most everything) in [Markdown](https://en.wikipedia.org/wiki/Markdown), along with what seems to be most of the rest of the world. While using Markdown, I discovered [Mermaids.js](https://mermaid-js.github.io/mermaid/#/) for charts and graphs and haven’t looked back. [2022-03-19-introducing-cve-markdown-charts-part-1](https://clearbluejar.github.io/posts/introducing-cve-markdown-charts-part-1/)
 
 I have created several projects for which the primary output of the project is markdown, with [ghidra-pyhidra-callgraphs](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs) being no exception. It order to do that, I had to translate my `CallGraph` class to a format that `mermaidjs` would [understand](https://mermaid.js.org/syntax/flowchart.html#graph). 
 
@@ -1648,5 +1648,5 @@ Before we conclude, check out these reasons for using markdown:
 
 ### Recap
 
-We covered quite a few topics in this post.  From Ghidra and Python, to callgraphs and Markdown. If you have some feedback or direct questions, reach out on Twitter or comment in the [thread for the post](fillinlater).
+We covered quite a few topics in this post.  From Ghidra and Python, to callgraphs and Markdown. If you have some feedback or direct questions, reach out on Twitter or comment in the [thread for the post](https://twitter.com/clearbluejar).
 
