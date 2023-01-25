@@ -1648,5 +1648,5 @@ Before we conclude, check out these reasons for using markdown:
 
 ### Recap
 
-We covered quite a few topics in this post.  From Ghidra and Python, to callgraphs and Markdown. If you have some feedback or direct questions, reach out on Twitter or comment in the [thread for the post](https://twitter.com/clearbluejar).
+We covered quite a few topics in this post.  From Ghidra and Python, to callgraphs and Markdown. If you have some feedback or direct questions, reach out on Twitter or comment in the [thread for the post](https://twitter.com/clearbluejar/status/1618006843544207364).
 
