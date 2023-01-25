@@ -48,10 +48,5 @@ const allowedDomains = [
 
 /* Requests that include the following path will be banned */
 const denyUrls = [
-    '{{ cvedata | absolute_url }}'
-    // {% if site.google_analytics.pv.cache_path %}
-    //     '{{ site.google_analytics.pv.cache_path | absolute_url }}'
-    // {% endif %}
-
-
+    '{{ "cvedata" | absolute_url }}'
 ];
