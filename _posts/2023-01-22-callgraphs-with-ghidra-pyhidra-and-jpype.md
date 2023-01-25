@@ -1417,7 +1417,7 @@ classDef shaded fill:#339933
 
 The called graph, albeit difficult to see, begins with our selected function at its root. 
 
-![isspoolerimpersonating-called-callgraph](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/isspoolerimpersonating-called-callgraph.png){: .shadow }_`IsSpoolerImpersonating` Called Callgraph _
+![isspoolerimpersonating-called-callgraph](/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/isspoolerimpersonating-called-callgraph.png){: .shadow }_`IsSpoolerImpersonating` Called Callgraph_
 
 For me, this was the most challenging bit of this example repo. Pyhidra and Ghidra do the heavy lifting by providing all I need to analyze and traverse the binary. Remembering graph theory, directed graphs, and how to program them was the more difficult task. This brought me back to university computer science days, and I think I mostly have it correct. To store the callgraph edges and nodes, we will use a custom [`CallGraph` class](https://github.com/clearbluejar/ghidra-pyhidra-callgraphs/blob/1db84c4c7a83be1633b497f408c2bf9cd2c03aba/ghidra_pyhidra_callgraphs.py#L23-L112). Each node in our callgraph will represent a function and each edge a call to a function.
 
