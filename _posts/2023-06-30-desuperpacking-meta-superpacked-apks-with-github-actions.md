@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Desuperpacking Meta Superpacked APKs
-date: 2023-06-30 02:12 +0000
+date: 2023-06-30 11:12 +0000
 description: Superpacking (a method of optimal binary compression) APKs was introduced in 2021 to help Meta reduce the size of their Android APKs. This makes quite a bit of sense for reducing network traffic required for distribution, but becomes an issue when trying to recover the original native ARM binaries for analysis. This post walks through the process of "desuperpacking" (decompressing)  superpacked Meta superpacked APKs.  You will get an overview of Meta's superpack compression, a quick look at superpack internals, learn how to manually desuperpack native Android ARM libraries, and finally see how to [automate desuperpacking] using GitHub Actions.
 image:
   path: "/assets/img/2023-06-30-desuperpacking-meta-superpacked-apks-with-github-actions/pexels-fatih-turan-16196626.jpg"
