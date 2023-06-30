@@ -395,7 +395,7 @@ This causes 4 runners to run the entire script, one for each arch and APK provid
 
 ![](/assets/img/2023-06-30-desuperpacking-meta-superpacked-apks-with-github-actions/matric-android-extract-apk.png){: .shadow }_GitHub Action APK Artifacts_
 
-For each architecture we run steps from the workflow [above](#Workflow):
+For each architecture we run steps from the workflow above:
 
 ```yaml
 - name: Run emulator
