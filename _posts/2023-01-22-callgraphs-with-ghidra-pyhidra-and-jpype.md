@@ -8,7 +8,7 @@ image:
   src: "/assets/img/2023-01-22-callgraphs-with-ghidra-pyhidra-and-jpype/pexels-pixabay-268533.jpg"
   alt: Tree - Nature's Directed Graph
 category:
-- projects
+- ghidra
 - ghidra-pyhidra-callgraphs
 tags:
 - ghidra

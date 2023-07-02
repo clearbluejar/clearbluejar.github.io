@@ -9,7 +9,7 @@ image:
   alt: Ghidra Python Skeleton
   mermaid: true
 category:
-- projects
+- ghidra
 - ghidra-python-vscode-devcontainer-skeleton
 tags:
 - vscode
