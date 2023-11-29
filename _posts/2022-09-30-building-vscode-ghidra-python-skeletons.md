@@ -130,7 +130,7 @@ The project assumed you had Ghidra installed, and you would update your [setting
 
 ### Sample Ghidra Python Script
 
-To demonstrate Ghidra's FlatAPI, it would print section information for the binary with [sample.py]():
+To demonstrate Ghidra's FlatAPI, it would print section information for the binary with [sample.py](https://github.com/clearbluejar/ghidra-python-vscode-devcontainer-skeleton/blob/main/sample.py):
 ```python
 prog = askProgram("program")
 
