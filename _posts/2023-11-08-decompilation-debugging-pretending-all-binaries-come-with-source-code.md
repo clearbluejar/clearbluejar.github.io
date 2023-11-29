@@ -25,7 +25,7 @@ TL;DR - Debugging an application can provide the insight to understanding strang
 
 # Pretending All Binaries Come With Source Code
 
-Modern [decompilers](https://en.wikipedia.org/wiki/Decompiler) attempt to produce pseudo code that matches the original source. Pairing this ability with runtime debugging tools lets you debug closed source applications like they were your very own. Here is an example of debugging the standard Windows `wordpad.exe` application with Ghidra, stepping through pseudo-code and pretending like we have source. 
+Modern [decompilers](https://en.wikipedia.org/wiki/Decompiler) attempt to produce pseudo-code that matches the original. Pairing this ability with runtime debugging tools lets you debug closed-source applications like they were your very own. Here is an example of debugging Windows' `wordpad.exe` application with Ghidra, stepping through pseudo-code and pretending like we have source.
 
 ![](/assets/img/2023-11-08-decompilation-debugging-pretending-all-binaries-come-with-source-code/wordpad-debug-step-short.gif){: .shadow }_Decompilation Debugging of `wordpad.exe`_
 
