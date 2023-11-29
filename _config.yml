@@ -3,10 +3,6 @@
 # Import the theme
 theme: jekyll-theme-chirpy
 
-# Change the following value to '/PROJECT_NAME' ONLY IF your site type is GitHub Pages Project sites
-# and doesn't have a custom domain.
-baseurl: ""
-
 # The language of the webpage › http://www.lingoes.net/en/translator/langcode.htm
 # If it has the same name as one of the files in folder `_data/locales`, the layout language will also be changed,
 # otherwise, the layout language will use the default value of 'en'.
@@ -58,6 +54,9 @@ google_analytics:
   pv:
     proxy_endpoint: # fill in the Google Analytics superProxy endpoint of Google App Engine
     cache_path: # the local PV cache data, friendly to visitors from GFW region
+
+cache_skip_paths:
+  - 'cvedata/'
 
 # Prefer color scheme setting.
 #
@@ -117,6 +116,10 @@ pwa:
   enabled: true # the option for PWA feature
 
 paginate: 10
+
+# Change the following value to '/PROJECT_NAME' ONLY IF your site type is GitHub Pages Project sites
+# and doesn't have a custom domain.
+baseurl: ""
 
 # ------------ The following options are not recommended to be modified ------------------
 
@@ -181,13 +184,13 @@ compress_html:
 exclude:
   - "*.gem"
   - "*.gemspec"
+  - docs
   - tools
   - README.md
-  - CHANGELOG.md
   - LICENSE
   - rollup.config.js
-  - node_modules
   - package*.json
+  - node_modules
 
 jekyll-archives:
   enabled: [categories, tags]
@@ -218,4 +221,3 @@ jekyll_compose:
         src: "/assets/img/"
         alt: alt text
         mermaid: true
-      
