@@ -353,7 +353,7 @@ Sometimes when we are looking for interesting procedures, an interesting keyword
 
 > File operations initiated by low-privileged users and performed by privileged processes (such as services running as `SYSTEM`) are always interesting to investigate because they might lead to local privilege escalation (or even remote code execution in some cases). On top of that, they are relatively easy to find and visualize, using [Process Monitor](https://docs.microsoft.com/en-us/sysinternals/downloads/procmon) for instance. [From RpcView to PetitPotam](https://itm4n.github.io/from-rpcview-to-petitpotam/)
 
-For RpcView the discovery of procedure names is a tedious, even if you know what you a looking for. You have to click each interface to see the list of procedures.
+For RpcView, the discovery of procedure names is a tedious, even if you know what you are looking for. You have to click each interface to see the list of procedures.
 
 >When clicking on the LSASS process (1), we can see that it contains many RPC interfaces. So we go through them one by one and we stop on the one with the GUID `c681d488-d850-11d0-8c52-00c04fd90f7e` (2) because it exposes several procedures that **seem to perform file operations (according to their name)** (3). [From RpcView to PetitPotam](https://itm4n.github.io/from-rpcview-to-petitpotam/)
 
