@@ -9,7 +9,7 @@ order: 4
 
 > “We teach best what we most need to learn.” ― Richard Bach
 
-Writing facilitates thinking. Without writing, we have no way to determine whether our ideas or thoughts are coherent. Without putting our thoughts on paper, we have no means to organize our ideas and make and keep the connections. This site is a place to store thoughts, research, projects, and ideas.
+Writing facilitates thinking. Without it, we struggle to know whether our ideas or thoughts are coherent. Without putting our thoughts on paper, we have no means to organize our ideas and make the connections. This site is a place to store my thoughts, research, projects, and ideas.
 
 The hope is to create technical content, share it, get feedback, and improve.
 
