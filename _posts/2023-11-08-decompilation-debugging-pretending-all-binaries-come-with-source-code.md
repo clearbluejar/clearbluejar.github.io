@@ -48,7 +48,7 @@ To fully debug a program, you will need to produce debug symbols. When building 
 
 ![debug-flag](/assets/img/2023-11-08-decompilation-debugging-pretending-all-binaries-come-with-source-code/debug-flag.png){: .shadow }_[Debug Linker Flag](https://learn.microsoft.com/en-us/cpp/build/reference/debug-generate-debug-info?redirectedfrom=MSDN&view=msvc-160)_
 
-You can compile the application and coerce the linker to create debug symbols by using `/DEBUG` the [`/PDB`](https://learn.microsoft.com/en-us/windows/win32/debug/symbol-files?redirectedfrom=MSDN#pdb-files)  flag for Windows or the `-g` [GCC flag](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Debugging-Options.html) with Linux. 
+You can compile the application and coerce the linker to create debug symbols by using `/DEBUG` flag and [`/PDB`](https://learn.microsoft.com/en-us/windows/win32/debug/symbol-files?redirectedfrom=MSDN#pdb-files) flag for Windows or the `-g` [GCC flag](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Debugging-Options.html) with Linux. 
 
 Here is a sample linker command with `/DEBUG` for our rpc-svc project.
 >  `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\bin\HostX64\x64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\User\source\repos\rpc-svc\x64\Debug\server.exe" /INCREMENTAL /ILK:"x64\Debug\server.ilk" /NOLOGO rpcrt4.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\User\source\repos\rpc-svc\x64\Debug\server.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\User\source\repos\rpc-svc\x64\Debug\server.lib" /MACHINE:X64 x64\Debug\RPCsvc_s.obj`
@@ -320,7 +320,7 @@ subgraph Ghidra-JVM
 end
 ```
 
-Ghidra can call run "IN-VM" which will start the debugger within its own process, or it has the ability to launch an agent that will run the debugger in a [separate process](https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra/Debug/Debugger-agent-dbgeng/src/main/java/agent/dbgeng/gadp/DbgEngGadpServer.java#L89). The "IN-VM" case should run with better performance, but there is a risk to crashing Ghidra and losing your state if the Debugger crashes within the JVM. I had tried both with success. 
+Ghidra can call run "IN-VM" which will start the debugger within its own process, or it has the ability to launch an agent that will run the debugger in a [separate process](https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra/Debug/Debugger-agent-dbgeng/src/main/java/agent/dbgeng/gadp/DbgEngGadpServer.java#L89). The "IN-VM" case should run with better performance, but there is a risk to crashing Ghidra and losing your state if the Debugger crashes within the JVM. I have tried both with success. 
 
 ### Wait - Debuggers? What? How? 
 
