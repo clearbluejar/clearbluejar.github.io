@@ -1,7 +1,7 @@
 ---
 # the default layout is 'page'
 icon: fas fa-info-circle
-order: 4
+order: 5
 ---
 
 >“Writing is not what follows research, learning or studying, it is the medium of all this work.”
