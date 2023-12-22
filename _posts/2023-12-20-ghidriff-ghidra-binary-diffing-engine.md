@@ -17,7 +17,7 @@ tags:
   - cve
 mermaid: true
 ---
-TL;DR As seen in most security blog posts today, binary diffing tools are essential for reverse engineering, vulnerability research, and malware analysis. Patch diffing is a technique widely used to identify changes across versions of binaries as related to security patches. By diffing two binaries, a security researcher can dig deeper into the latest CVEs and patched vulnerabilities to understand their root cause. This post presents `ghidriff`, a new open-source Python package that offers a command-line binary diffing capability leveraging the power of the Ghidra Software Reverse Engineering (SRE) Framework with a fresh take on the standard patch diffing workflow.
+TL;DR As seen in most security blog posts today, binary diffing tools are essential for reverse engineering, vulnerability research, and malware analysis. Patch diffing is a technique widely used to identify changes across versions of binaries as related to security patches. By diffing two binaries, a security researcher can dig deeper into the latest CVEs and patched vulnerabilities to understand their root cause. This post presents [`ghidriff`](https://github.com/clearbluejar/ghidriff), a new open-source Python package that offers a command-line binary diffing capability leveraging the power of the Ghidra Software Reverse Engineering (SRE) Framework with a fresh take on the standard patch diffing workflow.
 
 `ghidriff` is a side project that evolved into a powerful [patch diffing](https://cve-north-stars.github.io/docs/Patch-Diffing) tool for vulnerability research. I have had the privilege to present it at several conferences this year and the slides are available [here](https://www.blackhat.com/sector/2023/briefings/schedule/#ghidriff-ghidra-binary-diffing-engine-34595). It is about a year in the making and publicly released in [October](https://github.com/clearbluejar/ghidriff/releases/tag/v0.5.0). Coincidentally, BinDiff decided it was also time to open-source (after ~20 years!) a few weeks before. Also, another tool `qbindiff` came out just a day later! So, in the now sea of binary diffing tools, `ghidriff` [throws its hat](https://twitter.com/clearbluejar/status/1712093656708976868) into the ring. 
 
@@ -94,7 +94,7 @@ I know of 3 different methods of matching two functions. Each method has its pro
 
 > Source: [Ghidra Patch Diffing](https://cve-north-stars.github.io/docs/Ghidra-Patch-Diffing#run-correlators-step-3)
 
-Syntax-based function matching heuristics are quick, accurate, but doesn’t handle minor changes or compiler optimizations.
+Syntax-based function matching heuristics are quick and accurate, but cannot handle minor changes or compiler optimizations.
 
 
 ![](/assets/img/2023-12-20-ghidriff-ghidra-binary-diffing-engine/syntax-based-correlation.png){: .shadow }_Syntax Matching Heuristic - `ExactBytesFuncotinHasher` from [VT](https://github.com/NationalSecurityAgency/ghidra/blob/6242fda158fed6c7dbbd6928a4a74371a212c373/Ghidra/Features/Base/src/main/java/ghidra/app/plugin/match/ExactBytesFunctionHasher.java#L29)_
