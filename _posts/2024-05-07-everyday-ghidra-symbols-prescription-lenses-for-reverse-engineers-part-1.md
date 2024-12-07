@@ -7,6 +7,7 @@ image:
   path: "/assets/img/2024-05-07-everyday-ghidra-symbols-prescription-lenses-for-reverse-engineers-part-1/everyday-ghidra-symbols-1-title.png"
   src: "/assets/img/2024-05-07-everyday-ghidra-symbols-prescription-lenses-for-reverse-engineers-part-1/everyday-ghidra-symbols-1-title.png"
   alt: everyday-ghidra-symbols
+  lqip: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAklEQVR4AewaftIAAADvSURBVA3BTS/DAACA4Xdtde10WlrbSmJGll0kJA47iqOL+w4Oc/QXXFz8il2c3SVukyzixAEHISLmqxlt1+lqiXbleTIVzU51IcWQRKq2xe52gbOTe96DEVrcZ2e/Sa2xhySTUipXWS8v0GjWqRRCXo9v0YuTaIMYIp8kdBBEUqa0PFsbc5j5LE77mjdilF+Jj08VRYXx9ykS/9ZqOvPLMzy2O4RKwCgj030aUifi5rBDz11FLGZzB4uSh+Wd8yOndN0IwzB5ueuxuTKNNatydPWFNEwSnh2fVj+HZY0RBgFekGIulXiwJ2hdulz4CX9jDlWM2U1bcwAAAABJRU5ErkJggg==
   mermaid: true
 category:
 - everydayghidra
