@@ -243,7 +243,6 @@ jekyll_compose:
       category: [TOP_CATEGORIE, SUB_CATEGORIE]
       tags: blog
       mermaid: true
-      author: clearbluejar
       category:
         - main
         - sub
