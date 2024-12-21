@@ -165,7 +165,7 @@ When you check this, the analysis will run the code to download the PDB, similar
 
 ## How do I know that symbols have been loaded?
 
-While in [part 1](/_posts/2024-05-07-everyday-ghidra-symbols-prescription-lenses-for-reverse-engineers-part-1.md), we saw specifically how symbols improve analysis, there are some general ways to determine if symbols have improved your analysis.
+While in [part 1]({% link _posts/2024-05-07-everyday-ghidra-symbols-prescription-lenses-for-reverse-engineers-part-1.md %}), we saw specifically how symbols improve analysis, there are some general ways to determine if symbols have improved your analysis.
 
 One quick way to check is to press Cmd + T / Ctrl + T to open up the S_ymbol Table_ Window. For general reverse engineering, I often jump here to navigate to specific function or search for useful names. Without symbols, most of your useful name will come from export names. The functions within the binary with have names like FUN\_6758473.
 
