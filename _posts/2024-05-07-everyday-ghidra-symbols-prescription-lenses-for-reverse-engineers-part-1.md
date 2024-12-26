@@ -229,6 +229,8 @@ With this extra type information the decompilation becomes even clearer.
 
 Check out the enhanced `CreateFileW`psuedo-code:
 
+![](/assets/img/2024-05-07-everyday-ghidra-symbols-prescription-lenses-for-reverse-engineers-part-1/2024-12-26-383.png)
+
 ## Debug Binaries and Private Symbols
 
 If you are reversing a debug version of a binary, Ghidra can generally pull out the information and use it. Typically, if you have a debug version, there is no need to reverse as you most likely have the source.
@@ -250,6 +252,8 @@ This is part one of a look into how symbols enhance reverse engineering and deta
 ---
 
 # Going Deeper
+
+This article provides a brief overview of Ghidra’s utility in reverse engineering and the role of symbols in streamlining the process. For a deeper dive into my research and long form writing, check out the other posts here on [clearbluejar.github.io](https://clearbluejar.github.io) or go hands on with one of my training courses.
 
 ## Everyday Ghidra
 
