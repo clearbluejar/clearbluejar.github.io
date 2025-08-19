@@ -195,7 +195,7 @@ $ uvx pyghidra-mcp -t streamable-http /path/to/your/bin1 /path/to/your/bin2
 
   
 
-[![](assets/img/2025-08-19-pyghidra-mcp-headless-ghidra-mcp-server-for-project-wide-multi-binary-analysis/0_Oyox-dU-yKygnLmz.png){: .shadow }_pyghidra-mcp_](http://github.com/clearbluejar/pyghidra-mcp)
+[![](assets/img/2025-08-19-pyghidra-mcp-headless-ghidra-mcp-server-for-project-wide-multi-binary-analysis/0_Oyox-dU-yKygnLmz.png){: .shadow }_pyghidra-mcp_](https://github.com/clearbluejar/pyghidra-mcp)
 
 
 
