@@ -157,6 +157,8 @@ Here are some screen shots from a successful one-shot session:
 
 Here is the full 1-shot chat response: [https://gist.github.com/clearbluejar/09294e170b5de4bef7bf8f4d65c82751](https://gist.github.com/clearbluejar/09294e170b5de4bef7bf8f4d65c82751) 
 
+{% include embed/youtube.html id='oWCiRQ1qhV4' %}
+
 Here is a concise summary of the 1-shot multi-binary reversing session:
 
 ![](assets/img/2025-08-19-pyghidra-mcp-headless-ghidra-mcp-server-for-project-wide-multi-binary-analysis/1*69ZN9jCdB3i9m-RvfKp_mw.png){: .shadow }_22 tool calls to answer_
