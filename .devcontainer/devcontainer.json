@@ -25,5 +25,6 @@
         "mhutchie.git-graph"
       ]
     }
-  }
+  },
+  "runArgs": ["--add-host=host.docker.internal:host-gateway"]
 }
