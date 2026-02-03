@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'How LLMs Feed Your RE Habit: Following the Use-After-Free Trail in CLFS'
-date: 2026-02-03 02:14 +0000
+date: 2026-02-03 02:15 +0000
 description: "Dive into how LLMs and pyghidra-mcp accelerate reverse engineering by tracing a UAF vulnerability in CLFS through a patch diff."
 image:
   path: "/assets/img/2026-02-03-how-llms-feed-your-re-habit-following-the-uaf-trail-in-clfs/marc-sendra-martorell--Vqn2WrfxTQ-unsplash.jpg"
