@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'How LLMs Feed Your RE Habit: Following the Use-After-Free Trail in CLFS'
-date: 2026-02-03 02:15 +0000
+date: 2026-02-03 06:15 +0000
 description: "Dive into how LLMs and pyghidra-mcp accelerate reverse engineering by tracing a UAF vulnerability in CLFS through a patch diff."
 image:
   path: "/assets/img/2026-02-03-how-llms-feed-your-re-habit-following-the-uaf-trail-in-clfs/marc-sendra-martorell--Vqn2WrfxTQ-unsplash.jpg"
@@ -34,9 +34,9 @@ They help you move faster in systems you already know, and they help you build f
 
 ## How LLMs Feed Your RE Habit Series
 
-This two‑part mini‑series explores both sides of that experience:  
-- First, by following a UAF path in CLFS — a subsystem I know well enough to be dangerous.
-- Then, by mapping macOS XPC services — a subsystem I just started studying.
+This two‑part series covers both scenarios:  
+- First, tracing a UAF path in CLFS (a subsystem I know well enough to be dangerous)
+- Then, mapping macOS XPC services (a subsystem I'm just learning)
 
 Same tools, totally different terrain.
 
@@ -48,7 +48,7 @@ Before diving into the vulnerability, let's quickly understand what CLFS (Common
 
 CLFS is just another Windows kernel driver that quietly does its job… until it doesn’t. And when it doesn’t, the consequences surface directly in the kernel.
 
-User-mode applications interact with it through Win32 APIs like [CreateLogFile](https://learn.microsoft.com/en-us/windows/win32/api/clfsw32/nf-clfsw32-createlogfile) and [ReserveAndAppendLog](https://learn.microsoft.com/en-us/windows/win32/api/clfsw32/nf-clfsw32-reserveandappendlog) (from clfsw32.dll), which open special log handles — by sending IOCTL requests straight to the **clfs.sys** driver in the kernel. 
+User-mode applications interact with it through Win32 APIs like [CreateLogFile](https://learn.microsoft.com/en-us/windows/win32/api/clfsw32/nf-clfsw32-createlogfile) and [ReserveAndAppendLog](https://learn.microsoft.com/en-us/windows/win32/api/clfsw32/nf-clfsw32-reserveandappendlog) (from clfsw32.dll), which open special log handles by sending IOCTL requests straight to the **clfs.sys** driver in the kernel. 
 
 The vulnerabality can be triggered by creating a subtle race condition by sending these IOCTLs. Eventually, through the help of a patch diff, a blog post, and an LLM, we will see exactly how the vulnerability can be triggered. 
 
@@ -58,11 +58,11 @@ The vulnerabality can be triggered by creating a subtle race condition by sendin
 
 Patch diffs are where the story starts, not where it ends.
 
-When you’re [patch diffing](https://cve-north-stars.github.io/docs/Patch-Diffing), finding the code changes is _usually_ the easy part. The harder part — and the part that actually matters — is understanding why the change was needed. That’s where the reverse engineering begins. You start tracing control flow, start to understand the code, and ask the classic question:
+When you’re [patch diffing](https://cve-north-stars.github.io/docs/Patch-Diffing), finding the code changes is _usually_ the easy part. The harder part (the part that actually matters) is understanding why the change was needed. That’s where the reverse engineering begins. You trace control flow, understand the code, and ask the classic question:
 
 *“Okay… but how does this actually become a bug?”*
 
-Try it. You can run the patch diff for [CVE-2025-29824](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824) yourself with these commands:
+Give it a try. You can run the patch diff for [CVE-2025-29824](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824) yourself:
 ```bash 
 wget https://msdl.microsoft.com/download/symbols/Clfs.Sys/B199B0AF86000/Clfs.Sys -O clfs.sys.x64.10.0.26100.3624
 wget https://msdl.microsoft.com/download/symbols/Clfs.Sys/931DCBBD86000/Clfs.Sys -O clfs.sys.x64.10.0.26100.3775
@@ -73,19 +73,19 @@ Check out the [ghidriff result](https://gist.github.com/clearbluejar/2717c01bccd
 
 ![Ghidriff diff of CLFS patch changes](/assets/img/2026-02-03-how-llms-feed-your-re-habit-following-the-uaf-trail-in-clfs/ghidriff-clfs-diff.png){: .shadow }_Ghidriff diff output showing CLFS patch changes_
 
-From the diff we can see a couple functions have been modified and we can actually go and see the details of how the code was changed. We know that CVE-2025-29824 is a use-after-free (UAF), so that gives us quite a bit of a head start and the perfect context for an LLM. 
+The diff shows modified functions, and we can examine exactly how the code changed. Since CVE-2025-29824 is a use-after-free (UAF), this gives us a head start and perfect context for an LLM. 
 
-In addition to the diff, sometimes you get lucky and someone has already done the heavy lifting. For this example we can leverage an excellent StarLabs write‑up on CVE‑2025‑29824. With this detailed post, the diff and vulnerability have context, shape, and stakes. 
+Beyond the diff, sometimes you get lucky when someone's already done the heavy lifting. Here we can use an excellent StarLabs write‑up on CVE‑2025‑29824. This detailed post gives the diff and vulnerability context, shape, and stakes. 
 
 >Turns out, it’s a use-after-free vulnerability in the Windows Common Log File System (CLFS) driver. When a log file handle is closed, the FsContext2 structure is incorrectly freed in CClfsRequest::Cleanup(), while another IRP request can still be in progress.  [My Blind Date with CVE-2025-29824](https://starlabs.sg/blog/2025/07-my-blind-date-with-cve-2025-29824/)
 
-When reading another write-up, I like to go and see for myself if it's true. A good write‑up shouldn't replace your own investigation — it gives you a direction. Maybe this is true for you? You want to see the path, the conditions, the lifetime transitions, the exact moment where CLFS lets a UAF slip through.
+When I read another write-up, I verify it myself. A good write‑up doesn't replace your investigation; it gives you direction. You want to see the path, conditions, lifetime transitions, and the exact moment where CLFS lets a UAF slip through.
 
-You can do this investigation on your own with Ghidra, Binja, or Ida, but what if you could automate some of the analysis with a LLM? Let's try it. 
+You can investigate this with Ghidra, Binja, or Ida, but what if you could automate some analysis with an LLM? Let's try it. 
 
 ## Environment Setup and Tech Stack
 
-To follow along, you'll need a setup that combines the knowledge of LLMs with Ghidra's analysis power. If you have the compute that can run local LLMs, even better!
+To follow along, you'll need a setup combining LLM knowledge with Ghidra's analysis power. If you have hardware to run local LLMs, even better!
 
 ### Local LLM Tech Stack
 
@@ -105,7 +105,7 @@ If you're hitting issues:
 
 I started with the diff and context from the StarLabs blog. The change was simple on the surface with just a few lines modified in CLFS driver functions. 
 
-Immediate thought...  "How well can an LLM match the analysis found in the blog?" 
+My first thought: "How well can an LLM match the analysis in the blog?" 
 
 <!-- We will use the LLM to attempt to repeat some of the analysis and see how it performs.  -->
 
@@ -119,7 +119,7 @@ We get an accurate answer:
 It even had the details about potential pending IRP requests that would cause the issue:
 ![LLM details on IRP requests](/assets/img/2026-02-03-how-llms-feed-your-re-habit-following-the-uaf-trail-in-clfs/llm-response-details.png){: .shadow }_LLM details on potential pending IRP requests causing UAF_
 
-**Remember this result was from a local LLM!** 🤯
+**Remember this result came from a local LLM!** 🤯
 
 With just the patch diff and a targeted prompt, the LLM independently inferred the same race condition described in the StarLabs post. Not word‑for‑word, but still accurate.
 
@@ -132,10 +132,9 @@ The key insight for the vuln lies in understanding Windows I/O Request Packet (I
 - **IRP_MJ_CLEANUP**: Sent when the last user-mode handle closes, but outstanding I/O requests might still be active
 - **IRP_MJ_CLOSE**: Sent only when the last reference to the file object is released and all I/O is complete
 
-Think of cleanup as the application saying "I'm done with this handle," and CLOSE as the kernel saying "Everyone is done with this object." This timing window is where the vulnerability lives - between cleanup and close, the `FsContext2` structure can be accessed by other threads after it's been freed.
+Think of cleanup as the application saying "I'm done with this handle," while CLOSE is the kernel saying "Everyone is done with this object." The vulnerability lives in this timing window (between cleanup and close), the `FsContext2` structure can be accessed by other threads after being freed.
 
-These facts can be learned from reading the blog post, from experience, or
-from the **knowledge found in a 30B 4-bit 18GB quantized model from Nvidia running on your local machine**.
+You can learn these facts from the blog post, experience, or from the **knowledge in a 30B 4-bit 18GB quantized model from Nvidia running on your local machine**.
 
 ![Knowledge from local LLM](/assets/img/2026-02-03-how-llms-feed-your-re-habit-following-the-uaf-trail-in-clfs/knowledge-from-local-llm.png){: .shadow }_30B 4-bit 18GB quantized model from Nvidia_
 
@@ -145,9 +144,9 @@ Now that we understand the vulnerability, how could we dive deeper, either to se
 
 What other questions might we come up with? 
 
-New thought: *"Where does the UAF path actually form?"* 
+New question: "Where does the UAF path actually form?" 
 
-Time to go and see for ourselves. 
+Let's see for ourselves. 
 
 ## Importing the Vulnerable CLFS Binary  
 
@@ -241,11 +240,11 @@ Can we automate that search? I asked the LLM:
 
 I also asked it to map out the IOCTL codes needed to actually trigger the various code paths.
 
-This is where LLMs stop being a convenience and becomes an assistant for your RE workflow. Instead of manually spelunking through CLFS, I can get some help: list binaries, decompile functions, pull cross‑references, generate callgraphs — all inside a conversational loop.
+Here LLMs move from convenience to assistant in your RE workflow. Instead of manually spelunking through CLFS, I can get help: list binaries, decompile functions, pull cross‑references, generate callgraphs. All this inside a conversational loop.
 
 ![LLM IOCTL code mapping](/assets/img/2026-02-03-how-llms-feed-your-re-habit-following-the-uaf-trail-in-clfs/llm-ioctl-code-mapping.shadow.png){: .shadow }_LLM starting to understand the task and reviewing available tools_
 
-The LLMs start to make a plan, like a real analyst...
+The LLM starts making a plan, like a real analyst...
 
 ![LLM analysis plan](/assets/img/2026-02-03-how-llms-feed-your-re-habit-following-the-uaf-trail-in-clfs/llm-analysis-plan.shadow.png){: .shadow }_Thinking output: LLM creating analysis plan like a real analyst_
 
@@ -310,17 +309,16 @@ This wasn’t pattern‑matching or hallucination, it was actual binary analysis
 
 ### Why This Matters
 
-This is the moment where LLM‑augmented RE becomes more than autocomplete:
+This is where LLM‑augmented RE goes beyond autocomplete:
 
-- It **navigates the binary** the way a human would.  
-- It **follows dataflow** instead of guessing.  
-- It **reconstructs the vulnerability surface** from first principles.  
-- It **validates external research** against the actual binary.  
+- **Navigates the binary** like a human would  
+- **Follows dataflow** instead of guessing  
+- **Reconstructs the vulnerability surface** from first principles  
+- **Validates external research** against the actual binary  
 
-And it does it without breaking your momentum.
+All without breaking your momentum.
 
-You stay in the investigation.  
-The LLM handles the friction.
+You stay focused on the investigation while the LLM handles the friction.
 
 ## Quantifying the Speedup
 
@@ -335,29 +333,26 @@ The real metric isn’t just time. It’s confidence. When the LLM’s checking 
 
 ## What This Shows About LLM‑Augmented RE  
 
-- Faster triage.  
-- Clearer mental models of complex code paths.  
-- Less time spelunking, more time understanding.  
-- LLMs amplify your instincts instead of replacing them.
+- Faster triage
+- Clearer mental models of complex code paths  
+- Less spelunking, more understanding  
+- LLMs amplify your instincts, they don't replace them
 
 ## Wrapping Up - How LLMs Feed Your RE Habit: Part 1
 
-The CLFS UAF wasn't mysterious once the pieces were laid out — but getting to that point used to take hours of manual spelunking. With local LLMs and pyghidra‑mcp, the friction melts away. You spend less time hunting for the right entry point and more time reasoning about the vulnerability itself.  
+The CLFS UAF wasn't mysterious once the pieces were laid out, but getting there used to take hours of manual spelunking. With local LLMs and pyghidra‑mcp, the friction melts away. You spend less time hunting entry points and more time reasoning about the vulnerability.  
 
-That's the real value here.  
-Not automation.  
-Not shortcuts.  
-Just a smoother path to understanding, so your attention stays on the parts that matter.  
+That's the real value: a smoother path to understanding, so your attention stays on what matters.  
 
 **LLMs don't replace the work. They feed the habit.** 
 
-**LLMs make the work feel lighter, faster, and more fun.**
+**LLMs make the work lighter, faster, and more fun.**
 
 ---
 
 ## Looking Ahead to Part 2 - Exploring a New Area in RE
 
-While CLFS gave us a deep dive into a known subsystem, our next adventure takes us into (potentially) unfamiliar territory - MacOS XPC services. We'll see how LLMs help when you don't even know where to start, turning a maze of binaries into a navigable map. Same tools, different challenge. Stay tuned.
+While CLFS was a deep dive into familiar territory, our next adventure explores unfamiliar ground (MacOS XPC services). We'll see how LLMs help when you don't know where to start, turning a binary maze into a navigable map. Same tools, different challenge. Stay tuned.
 
 If you liked this post or want to reach out, find me [on X](https://x.com/clearbluejar) or [mastadon](https://infosec.exchange/@clearbluejar). 
 
@@ -368,7 +363,7 @@ If you liked this post or want to reach out, find me [on X](https://x.com/clearb
 [![](/assets/img/training/building-agentic-re.jpg)](https://l.clearseclabs.com/ib57i){: width="972" height="589" .w-50 .right .rounded-10}
 
 
-As you just read, LLMs make the work feel lighter, faster, and more fun. But getting the LLM to behave this reliably isn't magic—it's an engineering skill in itself.
+As you've read, LLMs make work lighter, faster, and more fun. But getting LLMs to behave this reliably isn't magic, rather it's an engineering skill.
 
 
 
