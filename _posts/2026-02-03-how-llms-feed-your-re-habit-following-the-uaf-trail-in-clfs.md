@@ -28,7 +28,7 @@ Reverse engineering has always been a mix of instinct, curiosity, and stubbornne
 
 Not as oracles.
 Not as replacements.
-As **momentum** — the thing that keeps you moving when the system gets complicated.
+As **momentum** — the force that keeps you moving when the system gets complicated.
 
 They help you move faster in systems you already know, and they help you build foundational structure in systems you've never touched. They can turn "Where do I start?" into "Show me the shape of this thing."  
 
@@ -260,7 +260,7 @@ They ended up with three key functions:
 
 These are the functions that dereference `FsContext2` and can collide with the cleanup path, creating the UAF window.
 
-When I asked the LLM to search for `FsContext2` usage, it independently surfaced several **the same functions** — without being told they existed.
+When I asked the LLM to search for `FsContext2` usage, it independently surfaced several of **the same functions** without being told they existed.
 
 
 
@@ -398,7 +398,7 @@ This training isn’t about learning another tool. It’s about gaining:
 - The leverage to automate the friction so you can stay in the investigation  
 - The confidence to build agentic skills that match the way **you** reverse engineer  
 
-If you want RE to feel lighter, faster, and more structurally supported — not because the work is simpler, but because you’re operating with more leverage — this is where that shift starts.
+If you want RE to feel lighter, faster, and more structurally supported, not because the work is simpler, but because you’re operating with more leverage, this is where that shift starts.
 
-Explore the AI and other related training: [CLEARSECLABS Training](https://l.clearseclabs.com/ib57i)
+Explore the CSL AI and other related training: [CLEARSECLABS Training](https://l.clearseclabs.com/ib57i)
 
