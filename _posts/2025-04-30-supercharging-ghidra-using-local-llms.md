@@ -14,7 +14,7 @@ category:
 tags:
 - LLMs
 - AI
-- reverse engineering
+- reverse-engineering
 - vibe-reversing
 ---
 

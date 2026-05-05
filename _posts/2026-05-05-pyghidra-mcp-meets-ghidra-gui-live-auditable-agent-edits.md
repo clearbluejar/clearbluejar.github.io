@@ -15,7 +15,7 @@ tags:
 - LLMs
 - AI
 - local-llm
-- reverse engineering
+- reverse-engineering
 - vibe-reversing
 - pyghidra-mcp
 - CVE-2024-3273
