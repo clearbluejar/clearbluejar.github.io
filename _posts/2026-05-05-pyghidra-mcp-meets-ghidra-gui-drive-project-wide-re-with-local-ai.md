@@ -4,8 +4,8 @@ title: 'pyghidra-mcp Meets Ghidra GUI: Drive Project-Wide RE with Local AI'
 date: 2026-05-05 08:00 +0100
 description: "pyghidra-mcp v0.2.0 ships a GUI-backed mode that lets a local LLM drive a live Ghidra CodeBrowser at full project scope. Renames, plate comments, and cross-binary pivots land in real time, with every edit tagged in Ghidra's undo history while the session is alive."
 image:
-  path: "/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/hero-dragon.jpg"
-  src: "/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/hero-dragon.jpg"
+  path: "/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/hero-dragon.jpg"
+  src: "/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/hero-dragon.jpg"
   alt: Stone-carved dragon, close up
   lqip: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/AABEIAAcACgMBEQACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APAf2T/ij4U12RfGOm/sxfDj4N/DzW9D8PaR/aXw816wNl4v8TP4X0p/tuhfDW18FaFZ+B7STSnubbVozq0FvLq9uk2n2KWNxcvdgHsWofEX4efb777Hd3KWn2y5+ypFDqixpbec/kLGs1iZVRYtoRZSZAoAclsmgD//2Q==
 category:
@@ -23,7 +23,7 @@ tags:
 
 > **TL;DR** [pyghidra-mcp](https://github.com/clearbluejar/pyghidra-mcp) v0.2.0 introduces a `--gui` mode. The same headless pyghidra-mcp server that ships an entire Ghidra project to an LLM can now drive a live Ghidra CodeBrowser window. In this post, I drive an LLM session with OpenWebUI (local Gemma4) against D-Link DNS-320L firmware, watching the agent rename functions, write plate comments, and pivot across two binaries to fully annotate the [CVE-2024-3273](https://nvd.nist.gov/vuln/detail/CVE-2024-3273) RCE chain end to end. Every edit lands live in the listing and shows up in Ghidra's undo history while the session is alive.
 
-![Hero: pyghidra-mcp driving Ghidra's CodeBrowser live](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-01-hero.png){: .shadow }
+![Hero: pyghidra-mcp driving Ghidra's CodeBrowser live](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-01-hero.png){: .shadow }
 _OpenWebUI on the left, real Ghidra CodeBrowser on the right. Same project, same program, live edits._
 
 When the [first pyghidra-mcp post](/posts/pyghidra-mcp-headless-ghidra-mcp-server-for-project-wide-multi-binary-analysis/) shipped back in August, the pitch was project-wide, multi-binary analysis from a headless server. That part is still the core of the tool. What was missing was a way for the human reverse engineer to *see* what the agent was doing without paging through a wall of tool-call JSON.
@@ -49,7 +49,7 @@ $ uvx pyghidra-mcp --gui --transport http --port 8337 \
     --project-path /path/to/dns320l_research.gpr
 ```
 
-![Server startup with GUI flag](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-02-server-startup.png){: .shadow }
+![Server startup with GUI flag](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-02-server-startup.png){: .shadow }
 _`pyghidra-mcp --gui` starting up: the server logs `GUI-backed server initialized` and the CodeBrowser launches against the project._
 
 On the tool side, GUI mode adds a handful of new MCP tools that only make sense once you have a window to drive:
@@ -80,12 +80,12 @@ $ uvx mcpo --port 8200 --server-type streamable-http -- http://localhost:8337/mc
 
 Model: `google/gemma-4-31b-it`, running locally. No API keys, no cloud calls, the agent and the GUI both sit on my laptop.
 
-![OpenWebUI Tools panel showing pyghidra-mcp registered through MCPO](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-02b-openwebui-tools.png){: .shadow }
+![OpenWebUI Tools panel showing pyghidra-mcp registered through MCPO](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-02b-openwebui-tools.png){: .shadow }
 _OpenWebUI's Tools panel sees `pyghidra-mcp` as an OpenAPI tool server at `http://localhost:8200`._
 
 ## The Target: CVE-2024-3273 in the DNS-320L Firmware
 
-![D-Link product page for the DNS-320L showing End of Life status](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-03a-dns320l-eol.png){: .shadow }
+![D-Link product page for the DNS-320L showing End of Life status](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-03a-dns320l-eol.png){: .shadow }
 _D-Link's own product page for the DNS-320L, marked End of Life._
 
 D-Link's [DNS-320L](https://www.dlink.com/en/consumer) is end of life. The vendor [classified the affected NAS line as EOL/EOS](https://supportannouncement.us.dlink.com/security/publication.aspx?name=sap10383) and declined to patch [CVE-2024-3273](https://nvd.nist.gov/vuln/detail/CVE-2024-3273), recommending users "retire and replace" instead. [Censys clocked 92,000+ exposed devices](https://censys.com/advisory/cve-2024-3273) at the time of disclosure. Two years on the count has dropped sharply (Shodan and ZoomEye now show hundreds, not tens of thousands), but the bug never got patched, so any unit still online is still vulnerable. The legacy firmware archive still serves the vulnerable image, so anyone can download the same binaries this post analyzes. The device is a NAS, which means it ships dozens of CGI binaries, a web stack, and a pile of shared libraries. Perfect for project-wide analysis.
@@ -96,7 +96,7 @@ I knew the bug was in `nas_sharing.cgi:FUN_0000f43c` going in. The follow-up pos
 
 The project starts with six binaries pre-imported: `account_mgr.cgi`, `libsafe_system.so`, `system_mgr.cgi`, `login_mgr.cgi`, `lighttpd`, `nas_sharing.cgi`. (Spoiler: those are not the right six. We will fix it.)
 
-![Project window with the original six DNS-320L binaries](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-03-project-window.png){: .shadow }
+![Project window with the original six DNS-320L binaries](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-03-project-window.png){: .shadow }
 _Project window after startup with six binaries staged, none of them the library `nas_sharing.cgi` actually links against for "sanitization."_
 
 ## The Prompts
@@ -109,7 +109,7 @@ Each section below captures my exact prompts and the response from Gemma4 31b.
 
 A warm-up. Gemma calls `list_project_binaries` and returns the six. This proves that pyghidra-mcp is setup properly and ready to work.
 
-![Prompt 1: list_project_binaries returns the six DNS-320L binaries](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-04-prompt1-list.png){: .shadow }
+![Prompt 1: list_project_binaries returns the six DNS-320L binaries](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-04-prompt1-list.png){: .shadow }
 _OpenWebUI showing the tool call and Gemma's summary._
 
 ### 2. Open and Explore the Suspect Function
@@ -118,24 +118,24 @@ _OpenWebUI showing the tool call and Gemma's summary._
 
 Gemma chains `open_program_in_gui` → `goto` → three `decompile_function` calls → three `read_bytes` calls.
 
-![OpenWebUI logging Gemma's tool chain for prompt 2](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-05-prompt2-tools.png){: .shadow }
+![OpenWebUI logging Gemma's tool chain for prompt 2](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-05-prompt2-tools.png){: .shadow }
 _OpenWebUI logs the chain: `open_program_in_gui`, `goto`, three `decompile_function` calls, three `read_bytes`._
 
 She walks the function in chat, naming the inputs, the auth flow, and the command-execution mechanism:
 
-![Gemma's structured analysis breakdown](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-05b-prompt2-analysis.png){: .shadow }
+![Gemma's structured analysis breakdown](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-05b-prompt2-analysis.png){: .shadow }
 _Input retrieval, authentication, and command execution, broken out one at a time._
 
 Then the verdict:
 
-![Prompt 2: Gemma's RCE summary](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-05-prompt2-explore.png){: .shadow }
+![Prompt 2: Gemma's RCE summary](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-05-prompt2-explore.png){: .shadow }
 _Gemma's verdict at the end of prompt 2._
 
 > *"This function implements a Remote Code Execution (RCE) feature. It requires a valid username/password (or a bypassed check), expects a Base64 encoded command in the `system` POST/GET parameter, and executes that command with the privileges of the web server."*
 
 A CodeBrowser is now open on `nas_sharing.cgi`, scrolled to `FUN_0000f43c`.
 
-![Ghidra CodeBrowser landed on nas_sharing.cgi at FUN_0000f43c](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-05a-prompt2-codebrowser.png){: .shadow }
+![Ghidra CodeBrowser landed on nas_sharing.cgi at FUN_0000f43c](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-05a-prompt2-codebrowser.png){: .shadow }
 _CodeBrowser landed on `nas_sharing.cgi:FUN_0000f43c`, before any renames._
 
 Worth calling out that the actual analysis happens in MCP tool calls (decompile, read_bytes), not in the GUI. The CodeBrowser is just where the result lands.
@@ -146,7 +146,7 @@ Worth calling out that the actual analysis happens in MCP tool calls (decompile,
 
 She picks `auth_system_exec_rce` and re-decompiles to confirm. The rename lands in the Symbol Tree, the Listing header updates, and every other function that called `FUN_0000f43c` now calls `auth_system_exec_rce` everywhere. Headless edit, GUI feedback.
 
-![Prompt 3: rename to auth_system_exec_rce](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-06-prompt3-rename.png){: .shadow }
+![Prompt 3: rename to auth_system_exec_rce](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-06-prompt3-rename.png){: .shadow }
 _The rename propagates through the listing and the symbol tree the instant the tool call returns._
 
 ### 4. Pin the Reasoning to the Function
@@ -155,7 +155,7 @@ _The rename propagates through the listing and the symbol tree the instant the t
 
 Gemma writes a structured plate comment. It is good, with three numbered sections (Inputs, Auth Flow, RCE Mechanism), the specific data reference (`DAT_00023a5c`) and the helper functions (`FUN_00016868`, `FUN_00016858`) all named without being asked.
 
-![Prompt 4: plate comment landed at the top of auth_system_exec_rce](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-07-prompt4-comment.png){: .shadow }
+![Prompt 4: plate comment landed at the top of auth_system_exec_rce](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-07-prompt4-comment.png){: .shadow }
 _The plate comment renders in the listing exactly like any human-authored comment, three sections plus a verdict._
 
 ### 5. Rename the Helper
@@ -168,7 +168,7 @@ Gemma chains `decompile_function` → `rename_function` and reports:
 
 The call site now reads as a clean RCE chain in three lines.
 
-![Prompt 5: the call chain now reads as prose](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-08-prompt5-chain.png){: .shadow }
+![Prompt 5: the call chain now reads as prose](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-08-prompt5-chain.png){: .shadow }
 
 ### 6. Ask the Question That Matters
 
@@ -188,13 +188,13 @@ She crossed binaries on her own. She named the library. She synthesized the iron
 
 The leap is a name match: `nas_sharing.cgi` imports `fix_path_special_char` and also imports a library called `libsafe_system.so`, and Gemma connects the two and later tries to verify, but things get worse.
 
-![Prompt 6: Gemma's confident-sounding pivot to libsafe_system.so](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-09-prompt6-vuln.png){: .shadow }
+![Prompt 6: Gemma's confident-sounding pivot to libsafe_system.so](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-09-prompt6-vuln.png){: .shadow }
 
 ### Aside: Missing Related Project Binaries, Fixed in the GUI
 
 Gemma sounds extremely sure of herself. Pushed to verify, she even calls `list_exports` on `libsafe_system.so`, sees that `fix_path_special_char` is not in the exports list, and still keeps her answer by inventing an "alias or thunk" explanation:
 
-![Gemma's confabulated explanation: alias or thunk to another function](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-09a-prompt7a-confabulation.png){: .shadow }
+![Gemma's confabulated explanation: alias or thunk to another function](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-09a-prompt7a-confabulation.png){: .shadow }
 _Gemma invents an "alias or thunk" to land on `shell_filter`._
 
 We can figure it out ourselves with `objdump`:
@@ -214,7 +214,7 @@ $ for f in rootfs/usrlib/*.so*; do
 
 The fix is the kind of thing the GUI makes trivial. Project window, *File → Batch Import…*, point at the directory the original binaries came from, click through. Ghidra picks up `libsmbif.so`, runs analysis, the project tree adds it next to the others.
 
-![Project tree after batch-importing libsmbif.so](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-10-batch-import.png){: .shadow }
+![Project tree after batch-importing libsmbif.so](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-10-batch-import.png){: .shadow }
 
 ### 7. Try Again, with the Right Library Loaded
 
@@ -234,7 +234,7 @@ This is the analysis we hoped for. It wasn't a smooth road; the libsafe pivot to
 
 The escape character set she described is correct. The absence of `|`, `>`, `<`, `\n` checks is real, in both the prefix `strchr` chain and the inner do-while loop.
 
-![Prompt 7: Gemma's real analysis of fix_path_special_char in libsmbif.so](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-11-prompt7b-real.png){: .shadow }
+![Prompt 7: Gemma's real analysis of fix_path_special_char in libsmbif.so](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-11-prompt7b-real.png){: .shadow }
 _Three issues, all verifiable, all introduced by a function whose name suggests safety._
 
 ### 8. Pin the Analysis and Close the Loop
@@ -243,7 +243,7 @@ _Three issues, all verifiable, all introduced by a function whose name suggests 
 
 Two-step finish in a single prompt. Tool chain: `set_comment` → `open_program_in_gui` → `goto`.
 
-![Prompt 8: plate comment landed at the top of fix_path_special_char in libsmbif.so](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-12-prompt8-comment.png){: .shadow }
+![Prompt 8: plate comment landed at the top of fix_path_special_char in libsmbif.so](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-12-prompt8-comment.png){: .shadow }
 _The libsmbif.so listing, plate comment in place, three numbered issues plus a verdict, written by the model and pinned by the model in the project file._
 
 A local LLM drove all of that through chat. Two CodeBrowser windows, one per binary, both annotated in Ghidra.
@@ -256,7 +256,7 @@ Three things change once the agent and the human share one Ghidra window:
 
 **Every edit is attributable, in-session.** *Edit → Undo* shows every agent write tagged with `pyghidra-mcp:`, all undoable via Ctrl+Z.
 
-![Edit menu showing every agent write tagged pyghidra-mcp](/assets/img/2026-05-04-pyghidra-mcp-meets-ghidra-gui-live-auditable-agent-edits/shot-13-edit-menu.png){: .shadow }
+![Edit menu showing every agent write tagged pyghidra-mcp](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-13-edit-menu.png){: .shadow }
 _Every agent write tagged with `pyghidra-mcp:` in the undo stack._
 
 **Project shape is fixable mid-session.** Agents only see what is loaded. When Gemma reached for the wrong library, *File → Batch Import…* on the firmware directory fixed it without a session restart, and her next prompt had `libsmbif.so` in scope. Headless can do the same via `import_binary`; the GUI just makes the fix obvious and clickable.
