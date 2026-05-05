@@ -6,7 +6,7 @@ description: "pyghidra-mcp v0.2.0 ships a GUI-backed mode that lets a local LLM 
 image:
   path: "/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/hero-dragon.jpg"
   src: "/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/hero-dragon.jpg"
-  alt: Stone-carved dragon, close up
+  alt: "pyghidra-mcp v0.2.0 introduces a --gui mode"
   lqip: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/AABEIAAcACgMBEQACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APAf2T/ij4U12RfGOm/sxfDj4N/DzW9D8PaR/aXw816wNl4v8TP4X0p/tuhfDW18FaFZ+B7STSnubbVozq0FvLq9uk2n2KWNxcvdgHsWofEX4efb777Hd3KWn2y5+ypFDqixpbec/kLGs1iZVRYtoRZSZAoAclsmgD//2Q==
 category:
 - ghidra
@@ -21,18 +21,18 @@ tags:
 - CVE-2024-3273
 ---
 
-> **TL;DR** [pyghidra-mcp](https://github.com/clearbluejar/pyghidra-mcp) v0.2.0 introduces a `--gui` mode. The same headless pyghidra-mcp server that ships an entire Ghidra project to an LLM can now drive a live Ghidra CodeBrowser window. In this post, I drive an LLM session with OpenWebUI (local Gemma4) against D-Link DNS-320L firmware, watching the agent rename functions, write plate comments, and pivot across two binaries to fully annotate the [CVE-2024-3273](https://nvd.nist.gov/vuln/detail/CVE-2024-3273) RCE chain end to end. Every edit lands live in the listing and shows up in Ghidra's undo history while the session is alive.
+> **TL;DR** [pyghidra-mcp](https://github.com/clearbluejar/pyghidra-mcp) v0.2.0 introduces a `--gui` mode. The same headless pyghidra-mcp server that ships an entire Ghidra project to an LLM can now drive a live Ghidra CodeBrowser window. In this post, I drive an LLM session with OpenWebUI (local Gemma4) against D-Link DNS-320L firmware, watching the agent rename functions, write plate comments, and pivot across two binaries to fully annotate the [CVE-2024-3273](https://nvd.nist.gov/vuln/detail/CVE-2024-3273) RCE chain end to end. Every edit appears in the Ghidra GUI as it happens and is recorded in the undo history.
 
 ![Hero: pyghidra-mcp driving Ghidra's CodeBrowser live](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-01-hero.png){: .shadow }
 _OpenWebUI on the left, real Ghidra CodeBrowser on the right. Same project, same program, live edits._
 
-When the [first pyghidra-mcp post](/posts/pyghidra-mcp-headless-ghidra-mcp-server-for-project-wide-multi-binary-analysis/) shipped back in August, the pitch was project-wide, multi-binary analysis from a headless server. That part is still the core of the tool. What was missing was a way for the human reverse engineer to *see* what the agent was doing without paging through a wall of tool-call JSON.
+When the [first pyghidra-mcp post](/posts/pyghidra-mcp-headless-ghidra-mcp-server-for-project-wide-multi-binary-analysis/) shipped back in August, the advantage was project wide analysis with the convenience of a headless server. That part is still the core of the tool. What was missing was a way for the human reverse engineer to *see* what the agent was doing without paging through a wall of tool-call JSON.
 
 This post is about filling that gap, and about what multi-binary reverse engineering looks like when the agent and the human share one window.
 
 ## The Problem with Headless-Only
 
-Headless works great for CI, Docker, and one-shot "analyze this whole firmware dump" scripts. It is the wrong fit when I am actively reversing something and I want to read the listing, follow an xref, set a bookmark, or sanity-check that the agent renamed the thing I thought it did. Before GUI mode, the project file was a black box until I closed the server and reopened it manually. By then the session context was gone, including any chance to catch the agent in the act when it sounded confident and was wrong.
+Headless works great for CI, Docker, and one-shot "analyze this whole firmware dump" scripts. It is less ideal when I am actively reversing something and I want to read the listing, follow an xref, set a bookmark, or sanity-check that the agent renamed the thing I thought it did. Before GUI mode, the project file was a black box until I closed the server and reopened it manually. By then the session context was gone, including any chance to catch the agent in the act when it sounded confident and was wrong.
 
 The fix is straightforward in retrospect. I had filed GUI mode away as impossible because Ghidra's project lock means two separate JVMs cannot open the same `.gpr` at the same time. Walking through the Ghidra source turned that into the obvious answer: do not run them as separate processes. Run `pyghidra-mcp` and `ghidra.GhidraRun` inside the same JVM, share one project, share one set of `Program` objects, and every MCP write lands in the GUI.
 
@@ -42,7 +42,7 @@ I wanted GUI mode because I had already seen what it felt like from the other si
 
 ## What Shipped in v0.2.0
 
-`pyghidra-mcp --gui` starts the server and launches Ghidra's CodeBrowser against the same project the MCP tools are operating on. They share the open `Program` objects, so any write performed through an MCP tool lands in the GUI instantly.
+`pyghidra-mcp --gui` starts the server and launches Ghidra's Project Manager against the same project the MCP tools are operating on. A CodeBrowser window opens for each binary the agent works on, sharing the same `Program` objects, so any write performed through an MCP tool lands in the GUI instantly.
 
 ```bash
 $ uvx pyghidra-mcp --gui --transport http --port 8337 \
@@ -60,7 +60,7 @@ On the tool side, GUI mode adds a handful of new MCP tools that only make sense 
 - [`rename_function`](https://github.com/clearbluejar/pyghidra-mcp/blob/c25f192388f1d8b2ba6f190688944f3bbf8ce7e9/src/pyghidra_mcp/mcp_tools.py#L266), [`set_comment`](https://github.com/clearbluejar/pyghidra-mcp/blob/c25f192388f1d8b2ba6f190688944f3bbf8ce7e9/src/pyghidra_mcp/mcp_tools.py#L344), [`rename_variable`](https://github.com/clearbluejar/pyghidra-mcp/blob/c25f192388f1d8b2ba6f190688944f3bbf8ce7e9/src/pyghidra_mcp/mcp_tools.py#L285), [`set_function_prototype`](https://github.com/clearbluejar/pyghidra-mcp/blob/c25f192388f1d8b2ba6f190688944f3bbf8ce7e9/src/pyghidra_mcp/mcp_tools.py#L325), [`set_variable_type`](https://github.com/clearbluejar/pyghidra-mcp/blob/c25f192388f1d8b2ba6f190688944f3bbf8ce7e9/src/pyghidra_mcp/mcp_tools.py#L305) perform writes that land live in the GUI
 - [`import_binary`](https://github.com/clearbluejar/pyghidra-mcp/blob/c25f192388f1d8b2ba6f190688944f3bbf8ce7e9/src/pyghidra_mcp/mcp_tools.py#L487) adds a binary to the project from a file path
 
-GUI mode requires `--transport http`. Ghidra captures `stdout` and `stderr` for its own logging the moment the CodeBrowser comes up, so the MCP server has to speak over a socket rather than fighting Ghidra for stdio. Stdio is still the default for headless workflows.
+GUI mode requires `--transport http`. Ghidra captures `stdout` and `stderr` for its own logging the moment the CodeBrowser comes up, so the MCP server has to speak over a socket rather than fighting Ghidra for stdio.
 
 ## The Setup: Local Agent, Local GUI
 
@@ -92,7 +92,7 @@ D-Link's [DNS-320L](https://www.dlink.com/en/consumer) is end of life. The vendo
 
 The bug itself is well documented by netsecfish's [advisory](https://github.com/netsecfish/dlink): unauthenticated RCE in `nas_sharing.cgi` via a Base64-encoded shell payload in the `system` parameter when `cmd=15`. The chain lives in one function. The auth is bypassed because the `messagebus` account is created at boot with an empty password and the blocklist does not include it. `system()` is called directly on attacker-controlled bytes after a "sanitizer" that turns out not to sanitize (we will get there).
 
-I knew the bug was in `nas_sharing.cgi:FUN_0000f43c` going in. The follow-up post in this series walks through how an unprimed local model finds it from scratch. Here, the goal is not the discovery, it is the workflow: drive the entire chase from chat, watch the GUI keep up, and see how a human in the loop catches the agent when it slips.
+I knew the bug was in `nas_sharing.cgi:FUN_0000f43c` going in. The follow-up post in this series walks through how an unprimed local model finds it from scratch. Here, the goal is not the discovery, it is the workflow: drive the entire analysis from OpenWebUI, watch the GUI keep up, and see how a human in the loop catches the agent when it goes off track.
 
 The project starts with six binaries pre-imported: `account_mgr.cgi`, `libsafe_system.so`, `system_mgr.cgi`, `login_mgr.cgi`, `lighttpd`, `nas_sharing.cgi`. (Spoiler: those are not the right six. We will fix it.)
 
@@ -114,14 +114,14 @@ _OpenWebUI showing the tool call and Gemma's summary._
 
 ### 2. Open and Explore the Suspect Function
 
-> Open `nas_sharing.cgi` in the Ghidra GUI, navigate to `FUN_0000f43c`, and explore it. Try to understand what the function does.
+> Open `nas_sharing` in the GUI, navigate to `FUN_0000f43c`, and explore it. Try to understand what the function does
 
 Gemma chains `open_program_in_gui` → `goto` → three `decompile_function` calls → three `read_bytes` calls.
 
 ![OpenWebUI logging Gemma's tool chain for prompt 2](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-05-prompt2-tools.png){: .shadow }
 _OpenWebUI logs the chain: `open_program_in_gui`, `goto`, three `decompile_function` calls, three `read_bytes`._
 
-She walks the function in chat, naming the inputs, the auth flow, and the command-execution mechanism:
+She walks the function in chat (Gemma reads as *she*, no?), naming the inputs, the auth flow, and the command-execution mechanism:
 
 ![Gemma's structured analysis breakdown](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-05b-prompt2-analysis.png){: .shadow }
 _Input retrieval, authentication, and command execution, broken out one at a time._
@@ -210,7 +210,7 @@ $ for f in rootfs/usrlib/*.so*; do
   -> rootfs/usrlib/libsmbif.so: 00009648 g    DF .text  fix_path_special_char
 ```
 
-`libsafe_system.so` does not export `fix_path_special_char`. The actual resolver is `libsmbif.so`, but this binary is not loaded in the Ghidra project. Gemma's pivot was confident-sounding and wrong, and she could not have known otherwise: `search_symbols_by_name` only sees what is loaded, and `libsafe_system.so` was the only one of the project's six binaries with a name that read like sanitization. The agent reasoned against what was loaded. If the relevant libraries are missing, you can get confident but wrong answers.
+`libsafe_system.so` does not export `fix_path_special_char`. The actual resolver is `libsmbif.so`, but this binary is not loaded in the Ghidra project. Gemma's pivot was confident-sounding and wrong, and she could not have known otherwise: `search_symbols_by_name` only sees what is loaded, and `libsafe_system.so` was the only one of the project's six binaries with a name that read like sanitization. The agent reasoned against what was loaded. **If the relevant libraries are missing, you can get confident but wrong answers.**
 
 The fix is the kind of thing the GUI makes trivial. Project window, *File → Batch Import…*, point at the directory the original binaries came from, click through. Ghidra picks up `libsmbif.so`, runs analysis, the project tree adds it next to the others.
 
@@ -220,7 +220,7 @@ The fix is the kind of thing the GUI makes trivial. Project window, *File → Ba
 
 > List binaries again. Take a look at libsmbif.so. Decompile fix_path_special_char and tell me whether the sanitization is sufficient.
 
-This time she does the work. Tool trace: `list_project_binaries` → `open_program_in_gui` → `search_symbols_by_name` → `decompile_function`. She lands on the real implementation in `libsmbif.so` and reports three findings, all of them real:
+This time she does the work. Tool trace: `list_project_binaries` → `open_program_in_gui` → `search_symbols_by_name` → `decompile_function`. She lands on the real implementation in `libsmbif.so` and reports three findings:
 
 > - **Whitelist gaps.** Pipe (`|`), redirects (`>`, `<`), and newlines are not escaped. Any of them suffices for command injection through `system()`.
 > - **Buffer overflow risk.** The function escapes into a fixed `local_1018[4096]` stack buffer with no bounds check on the destination index. A long input full of escapable characters overflows the buffer during the do-while loop.
@@ -230,14 +230,14 @@ Her closing line:
 
 > *"This function provides a false sense of security. Not only does it fail to block critical shell metacharacters like `|`, but it also introduces a memory corruption vulnerability (stack overflow) into the process. The RCE in `auth_system_exec_rce` remains wide open and is potentially even more exploitable due to these overflows."*
 
-This is the analysis we hoped for. It wasn't a smooth road; the libsafe pivot took some back and forth, and RE with LLMs will always have some of that. Still a really strong showing for `gemma-4-31b-it` running locally. With only `libsafe_system.so` loaded, Gemma reached for the closest plausible match: `shell_filter` (a real escaping function that lives in that library, just not the one `nas_sharing.cgi` actually calls). With `libsmbif.so` in scope, she walked the decompilation, named the missing characters, and surfaced an unrelated stack overflow on top.
+This is the analysis we hoped for. It wasn't a smooth road. The libsafe pivot took some back and forth, and RE with LLMs will always have some of that. Still a really strong showing for `gemma-4-31b-it` running locally. With only `libsafe_system.so` loaded, Gemma reached for the closest plausible match: `shell_filter` (a real escaping function that lives in that library, just not the one `nas_sharing.cgi` actually calls). With `libsmbif.so` in scope, she walked the decompilation, named the missing characters, and surfaced an unrelated stack overflow on top.
 
 The escape character set she described is correct. The absence of `|`, `>`, `<`, `\n` checks is real, in both the prefix `strchr` chain and the inner do-while loop.
 
 ![Prompt 7: Gemma's real analysis of fix_path_special_char in libsmbif.so](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-11-prompt7b-real.png){: .shadow }
 _Three issues, all verifiable, all introduced by a function whose name suggests safety._
 
-### 8. Pin the Analysis and Close the Loop
+### 8. Explain the Bug, Complete the Chain
 
 > Add a plate comment to `fix_path_special_char` summarizing the three issues you found, then take me back to `auth_system_exec_rce`.
 
@@ -263,7 +263,9 @@ _Every agent write tagged with `pyghidra-mcp:` in the undo stack._
 
 ## Reproduce It Yourself
 
-The prompts above are verbatim. Copy them into your chat UI of choice and follow along. Minimum stack:
+The prompts above are verbatim. Copy them into your chat UI of choice and follow along. 
+
+Tech stack:
 
 ```bash
 # Terminal 1: pyghidra-mcp server with GUI
@@ -277,11 +279,11 @@ $ uvx mcpo --port 8200 --server-type streamable-http -- http://localhost:8337/mc
 # panel at http://localhost:8200, pick a local model with tool-calling support.
 ```
 
-The model in this run was `google/gemma-4-31b-it`. Any local tool-calling model works. The arc is identical: list, open, explore, rename, comment, helper-rename, ask the vulnerability question, fix project shape if needed, pin the verdict, close the loop.
+The model in this run was `google/gemma-4-31b-it`. Any local tool-calling model works. The arc is identical: list, open, explore, rename, comment, helper-rename, ask the vulnerability question, fix project shape if needed, explain the issue, complete the RCE chain.
 
-The DNS-320L firmware itself is on D-Link's [legacy file archive](https://legacyfiles.us.dlink.com/). The cert chain fails strict verification, so `curl -k` or accepting the warning in a browser is needed.
+The DNS-320L firmware itself is on D-Link's [legacy file archive](https://legacyfiles.us.dlink.com/).
 
-Load the `DT_NEEDED` libraries up front. The agent reasons against what is loaded; if the relevant deps are not in the project, no amount of prompt engineering recovers the truth. (The follow-up post takes this further, pointing `import_binary` at the entire firmware rootfs in one tool call. Stay tuned.)
+Load the `DT_NEEDED` libraries up front. The agent reasons against what is loaded; if the relevant deps are not in the project, no amount of prompt engineering recovers the truth. Good luck and let me know how your session goes. 
 
 ---
 
