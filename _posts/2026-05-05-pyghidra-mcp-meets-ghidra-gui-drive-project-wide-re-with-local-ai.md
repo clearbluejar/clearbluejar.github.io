@@ -315,4 +315,4 @@ More info: [Agentic RE @ DEF CON 34](https://l.clearseclabs.com/defcon-agentic-r
 
 ---
 
-*Next in this series: [Local LLMs for Reverse Engineering: Rediscovering D-Link DNS-320L CVE-2024-3273 with Gemma-4](/posts/local-llms-for-reverse-engineering-rediscovering-dns320l-cve-2024-3273/). Six scaffolding variants against the same firmware, six different outcomes, and what happens when an unprimed local model is asked to find the bug from scratch.*
+*Coming up next in this series: six scaffolding variants against the same firmware, six different outcomes, and what happens when an unprimed local model is asked to find the bug from scratch. Stay tuned.*
