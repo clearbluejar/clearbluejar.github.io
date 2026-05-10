@@ -34,7 +34,7 @@ This post is about filling that gap, and about what multi-binary reverse enginee
 
 Headless works great for CI, Docker, and one-shot "analyze this whole firmware dump" scripts. It is less ideal when I am actively reversing something and I want to read the listing, follow an xref, set a bookmark, or sanity-check that the agent renamed the thing I thought it did. Before GUI mode, the project file was a black box until I closed the server and reopened it manually. By then the session context was gone, including any chance to catch the agent in the act when it sounded confident and was wrong.
 
-The fix is straightforward in retrospect. I had filed GUI mode away as impossible because Ghidra's project lock means two separate JVMs cannot open the same `.gpr` at the same time. Walking through the Ghidra source turned that into the obvious answer: do not run them as separate processes. Run `pyghidra-mcp` and `ghidra.GhidraRun` inside the same JVM, share one project, share one set of `Program` objects, and every MCP write lands in the GUI.
+The fix is straightforward in retrospect. I had filed GUI mode away as impossible because Ghidra's project lock means two separate JVMs cannot open the same `.gpr` at the same time. Walking through the Ghidra source turned that into the obvious answer: do not run them as separate processes. Run `pyghidra-mcp` and `ghidra.GhidraRun` inside the same JVM, share one project, share one set of `Program` objects, and every MCP write shows up in the GUI.
 
 ## What I Wanted from a Ghidra MCP
 
@@ -42,7 +42,7 @@ I wanted GUI mode because I had already seen what it felt like from the other si
 
 ## What Shipped in v0.2.0
 
-`pyghidra-mcp --gui` starts the server and launches Ghidra's Project Manager against the same project the MCP tools are operating on. A CodeBrowser window opens for each binary the agent works on, sharing the same `Program` objects, so any write performed through an MCP tool lands in the GUI instantly.
+`pyghidra-mcp --gui` starts the server and launches Ghidra's Project Manager against the same project the MCP tools are operating on. A CodeBrowser window opens for each binary the agent works on, sharing the same `Program` objects, so any write performed through an MCP tool shows up in the GUI instantly.
 
 ```bash
 $ uvx pyghidra-mcp --gui --transport http --port 8337 \
@@ -135,16 +135,16 @@ _Gemma's verdict at the end of prompt 2._
 
 A CodeBrowser is now open on `nas_sharing.cgi`, scrolled to `FUN_0000f43c`.
 
-![Ghidra CodeBrowser landed on nas_sharing.cgi at FUN_0000f43c](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-05a-prompt2-codebrowser.png){: .shadow }
-_CodeBrowser landed on `nas_sharing.cgi:FUN_0000f43c`, before any renames._
+![Ghidra CodeBrowser focused on nas_sharing.cgi at FUN_0000f43c](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-05a-prompt2-codebrowser.png){: .shadow }
+_CodeBrowser at `nas_sharing.cgi:FUN_0000f43c`, before any renames._
 
-Worth calling out that the actual analysis happens in MCP tool calls (decompile, read_bytes), not in the GUI. The CodeBrowser is just where the result lands.
+Worth calling out that the actual analysis happens in MCP tool calls (decompile, read_bytes), not in the GUI. The CodeBrowser is just where the result shows up.
 
 ### 3. Rename to Reflect Behavior
 
 > Based on what you found, rename `FUN_0000f43c` to a name that reflects its behavior, confirm the rename worked.
 
-She picks `auth_system_exec_rce` and re-decompiles to confirm. The rename lands in the Symbol Tree, the Listing header updates, and every other function that called `FUN_0000f43c` now calls `auth_system_exec_rce` everywhere. Headless edit, GUI feedback.
+She picks `auth_system_exec_rce` and re-decompiles to confirm. The rename appears in the Symbol Tree, the Listing header updates, and every other function that called `FUN_0000f43c` now calls `auth_system_exec_rce` everywhere. Headless edit, GUI feedback.
 
 ![Prompt 3: rename to auth_system_exec_rce](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-06-prompt3-rename.png){: .shadow }
 _The rename propagates through the listing and the symbol tree the instant the tool call returns._
@@ -155,7 +155,7 @@ _The rename propagates through the listing and the symbol tree the instant the t
 
 Gemma writes a structured plate comment. It is good, with three numbered sections (Inputs, Auth Flow, RCE Mechanism), the specific data reference (`DAT_00023a5c`) and the helper functions (`FUN_00016868`, `FUN_00016858`) all named without being asked.
 
-![Prompt 4: plate comment landed at the top of auth_system_exec_rce](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-07-prompt4-comment.png){: .shadow }
+![Prompt 4: plate comment shown at the top of auth_system_exec_rce](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-07-prompt4-comment.png){: .shadow }
 _The plate comment renders in the listing exactly like any human-authored comment, three sections plus a verdict._
 
 ### 5. Rename the Helper
@@ -243,7 +243,7 @@ _Three issues, all verifiable, all introduced by a function whose name suggests 
 
 Two-step finish in a single prompt. Tool chain: `set_comment` → `open_program_in_gui` → `goto`.
 
-![Prompt 8: plate comment landed at the top of fix_path_special_char in libsmbif.so](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-12-prompt8-comment.png){: .shadow }
+![Prompt 8: plate comment shown at the top of fix_path_special_char in libsmbif.so](/assets/img/2026-05-05-pyghidra-mcp-meets-ghidra-gui-drive-project-wide-re-with-local-ai/shot-12-prompt8-comment.png){: .shadow }
 _The libsmbif.so listing, plate comment in place, three numbered issues plus a verdict, written by the model and pinned by the model in the project file._
 
 A local LLM drove all of that through chat. Two CodeBrowser windows, one per binary, both annotated in Ghidra.
@@ -296,15 +296,18 @@ Reach out on [X](https://x.com/clearbluejar) or [mastadon](https://infosec.excha
 ## Going Deeper with This Workflow
 
 <div style="display: flex; gap: 0.75rem; align-items: stretch; margin: 1rem 0;">
-  <a href="https://l.clearseclabs.com/defcon-agentic-re-vegas-2026" style="flex: 1; display: block;">
-    <img src="/assets/img/training/building-agentic-re.jpg" alt="Agentic RE: Automating Reverse Engineering & Vulnerability Research with AI" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+  <a href="https://l.clearseclabs.com/agentic-re-csl-2026" style="flex: 1; display: block;">
+    <img src="/assets/img/training/building-agentic-re.jpg" alt="Agentic RE: Automating Reverse Engineering & Vulnerability Research with AI — virtual cohort" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
   </a>
   <a href="https://l.clearseclabs.com/defcon-agentic-re-vegas-2026" style="flex: 1; display: block;">
     <img src="/assets/img/training/agentic-re-secondary.jpg" alt="DEF CON Training signage for Agentic RE: Automating Reverse Engineering & Vulnerability Research with AI" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
   </a>
 </div>
 
-If this post made you want to drive Ghidra and more with local agents against real targets, I am teaching a two-day class at DEF CON 34: **Agentic RE: Automating Reverse Engineering & Vulnerability Research with AI**, August 10-11 2026 in Las Vegas.
+If this post made you want to drive Ghidra and more with local agents against real targets, I am teaching **Agentic RE: Automating Reverse Engineering & Vulnerability Research with AI** in two formats:
+
+- **Virtual cohort, July 6-10 2026** — five half-days, live over Zoom: [Agentic RE — CLEARSECLABS virtual](https://l.clearseclabs.com/agentic-re-csl-2026)
+- **DEF CON 34, August 10-11 2026** — two days in person, Las Vegas: [Agentic RE @ DEF CON 34](https://l.clearseclabs.com/defcon-agentic-re-vegas-2026)
 
 The training walks through:
 
@@ -313,8 +316,4 @@ The training walks through:
 - Prompt engineering, workflow security, and orchestration with DSPy
 - Reproducible agent workflows across Windows, Apple, Android, and other platforms
 
-More info: [Agentic RE @ DEF CON 34](https://l.clearseclabs.com/defcon-agentic-re-vegas-2026)
-
 ---
-
-*Coming up next in this series: six scaffolding variants against the same firmware, six different outcomes, and what happens when an unprimed local model is asked to find the bug from scratch. Stay tuned.*
