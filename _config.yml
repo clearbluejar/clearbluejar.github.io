@@ -225,6 +225,11 @@ exclude:
   - rollup.config.js
   - package*.json
   - node_modules
+  - blog_ideas
+  - _archive
+  - BLOG-STATUS.md
+  - AGENTS.md
+  - CLAUDE.md
 
 jekyll-archives:
   enabled: [categories, tags]

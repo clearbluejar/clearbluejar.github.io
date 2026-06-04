@@ -20,7 +20,11 @@ package-lock.json
 
 # Misc
 assets/js/dist
+.env
 
 # obisdian
 .obsidian
 .DS_Store
+
+# local clone of clearseclabs/system-over-model-gemma (its own git repo; force-push target)
+_repo-staging/
