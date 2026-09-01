@@ -20,7 +20,7 @@ tags:
 - vibe-reversing
 ---
 
-> **TL;DR** I was working through a batch of local open-weight models to see which ones could find a known FreeBSD kernel CVE, and when I got to the abliterated ("uncensored") builds they started saying yes a lot more often. Same size, same family, just weights edited to strip refusals. They graduate three to four times as many findings to VALID, including a false positive the base correctly rejects, and over the whole directory the most aggressive build never surfaced the real bug once. When you look at the chain of thought (the thinking) you can see it get on the right track, and then talk itself out of it.
+> **TL;DR** I was working through a batch of local open-weight models to see which ones could find a known FreeBSD kernel CVE, and when I got to the abliterated ("uncensored") builds they started saying yes a lot more often. Same size, same family, just weights edited to strip refusals. They graduate three to four times as many findings to VALID, including a false positive the base correctly rejects, and over the whole directory the most aggressive build never surfaced the real bug once. In the chain of thought you can watch it find the reason to say no, and then say yes anyway.
 
 ## Finding More Bugs?
 
